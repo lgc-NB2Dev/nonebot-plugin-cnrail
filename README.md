@@ -3,16 +3,16 @@
 <div align="center">
 
 <a href="https://github.com/lgc-NB2Dev/nonebot-plugin-cnrail">
-  <img src="https://raw.githubusercontent.com/lgc-NB2Dev/nonebot-plugin-cnrail/attets/logo.png" width="180" height="180" alt="NoneBotPluginLogo">
+  <img src="https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/cnrail/logo.png" width="180" height="180" alt="NoneBotPluginLogo">
 </a>
 
 <p>
   <img src="https://raw.githubusercontent.com/A-kirami/nonebot-plugin-template/resources/NoneBotPlugin.svg" width="240" alt="NoneBotPluginText">
 </p>
 
-# nonebot-plugin-cnrail
+# NoneBot-Plugin_CNRail
 
-_✨ NoneBot 插件简单描述 ✨_
+_✨ 12306 列车时刻表查询插件 ✨_
 
 <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="python">
 <a href="https://pdm.fming.dev">

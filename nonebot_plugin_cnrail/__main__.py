@@ -1,30 +1,40 @@
-from nonebot import on_command
-from nonebot.log import logger
+from nonebot import logger, on_command
+from nonebot.adapters import Message
 from nonebot.matcher import Matcher
-from nonebot.adapters import Message, Event, Bot
 from nonebot.params import CommandArg
-from nonebot_plugin_saa import Text, Image, MessageFactory, extract_target
+from nonebot_plugin_alconna.uniseg import Image, UniMessage
 
-from .utils import query_train_info
+from .data_source import MultipleTrainFoundError, query_train_info, render_train_info
 
-# region command register
+usage = "指令：train 车次"
+
+
 search_train_info = on_command("train", aliases={"列车信息"})
-
-# endregion
 
 
 @search_train_info.handle()
-async def _(bot: Bot, event: Event, message: Message = CommandArg()):
-    try:
-        extract_target(event)
-    except RuntimeError:
-        logger.warning("SAA 不支持的平台，取消响应")
-    train_no = str(message).strip()
+async def _(matcher: Matcher, arg_msg: Message = CommandArg()):
+    train_no = str(arg_msg).strip()
     if not train_no:
-        await search_train_info.finish("请输入车次")
+        await matcher.finish("请输入车次")
+
     try:
         train_info = await query_train_info(train_no)
-    except ValueError:
-        await search_train_info.finish("查询到多个车次，可能是当日未开行，请检查您的车次是否正确")
+    except MultipleTrainFoundError as e:
+        info_text = "\n".join(x.word for x in e.trains)
+        await matcher.finish(f"查询到多个车次，请检查您的车次是否正确\n{info_text}")
+    except Exception:
+        logger.exception("Failed to query train info")
+        await matcher.finish("查询信息时出现错误，请检查后台输出")
+
     if not train_info:
-        await search_train_info.finish("未查询到车次，可能是当日未开行，请检查您的车次是否正确")
+        await matcher.finish("未查询到车次，可能是当日未开行，请检查您的车次是否正确")
+
+    try:
+        img_bytes = await render_train_info(train_info)
+    except Exception:
+        logger.exception("Failed to render train info")
+        await matcher.finish("渲染图片时出现错误，请检查后台输出")
+
+    await UniMessage(Image(raw=img_bytes)).send(reply_to=True)
+    await matcher.finish()
