@@ -2,8 +2,8 @@
 
 <div align="center">
 
-<a href="https://v2.nonebot.dev/store">
-  <img src="https://raw.githubusercontent.com/XieXiLin2/nonebot-plugin-cnrail/attets/logo.png" width="180" height="180" alt="NoneBotPluginLogo">
+<a href="https://github.com/lgc-NB2Dev/nonebot-plugin-cnrail">
+  <img src="https://raw.githubusercontent.com/lgc-NB2Dev/nonebot-plugin-cnrail/attets/logo.png" width="180" height="180" alt="NoneBotPluginLogo">
 </a>
 
 <p>
