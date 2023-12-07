@@ -1,3 +1,4 @@
+from datetime import date
 from pathlib import Path
 from typing import List, Optional
 
@@ -10,7 +11,7 @@ from pydantic.tools import parse_obj_as
 
 from .models import TrainInfo, TrainStation, TrainSummary
 
-CHINA_RAIL_SEARCH_API = "https://search.12306.cn/search/v1/h5/search"
+CHINA_RAIL_SEARCH_API = "https://search.12306.cn/search/v1/train/search"
 CHINA_RAIL_DETAIL_API = "https://kyfw.12306.cn/otn/queryTrainInfo/query"
 
 ACG_IMAGE_URL = "https://www.loliapi.com/acg/pe/"
@@ -25,50 +26,58 @@ ROUTE_IMAGE_URL = f"{ROUTE_BASE_URL}image"
 class MultipleTrainFoundError(Exception):
     def __init__(self, trains: List[TrainSummary]) -> None:
         self.trains = trains
-        super().__init__()
+        super().__init__(trains)
 
 
 async def query_train_info(train_code: str) -> Optional[TrainInfo]:
     train_code = train_code.upper()
+    today_date = date.today().isoformat()
+
     async with httpx.AsyncClient(follow_redirects=True) as client:
         resp = await client.get(
             CHINA_RAIL_SEARCH_API,
-            params={"keyword": train_code},
+            params={
+                "keyword": train_code,
+                "date": today_date.replace("-", ""),
+            },
         )
         resp.raise_for_status()
 
-    data = parse_obj_as(List[TrainSummary], resp.json()["data"])
-
-    if not data:
+    raw_data = resp.json()["data"]
+    if not raw_data:
         return None
+
+    data = parse_obj_as(List[TrainSummary], raw_data)
     if len(data) > 1:
-        train_summary = next(
-            (train for train in data if train.params.station_train_code == train_code),
+        summary = next(
+            (train for train in data if train.station_train_code == train_code),
             None,
         )
-        if not train_summary:
+        if not summary:
             raise MultipleTrainFoundError(data)
     else:
-        train_summary = data[0]
+        summary = data[0]
 
-    params = train_summary.params
-    if params.station_train_code != train_code:
+    if summary.station_train_code != train_code:
         return None
 
     async with httpx.AsyncClient(follow_redirects=True) as client:
         resp = await client.get(
             CHINA_RAIL_DETAIL_API,
             params={
-                "leftTicketDTO.train_no": params.train_no,
-                "leftTicketDTO.train_date": params.date,
+                "leftTicketDTO.train_no": summary.train_no,
+                "leftTicketDTO.train_date": today_date,
                 "rand_code": "",
             },
         )
         resp.raise_for_status()
 
-    data = resp.json()["data"]["data"]
-    stations = parse_obj_as(List[TrainStation], data)
-    return TrainInfo(summary=train_summary, stations=stations)
+    raw_data = resp.json()["data"]["data"]
+    if not raw_data:
+        return None
+
+    stations = parse_obj_as(List[TrainStation], raw_data)
+    return TrainInfo(summary=summary, stations=stations)
 
 
 async def render_train_info(info: TrainInfo) -> bytes:

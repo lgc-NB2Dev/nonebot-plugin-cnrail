@@ -8,25 +8,21 @@ from pydantic.main import BaseModel, Field
 TZ_SHANGHAI = pytz.timezone("Asia/Shanghai")
 
 
-class TrainSummaryParams(BaseModel):
-    date: str
-    station_train_code: str
-    train_no: str
-    total_num: str
-    from_station: str
-    to_station: str
-
-
 class TrainSummary(BaseModel):
-    district_name: str = Field(alias="districtname")
-    goto_type: int = Field(alias="gotoType")
-    image: str
-    image_url: str = Field(alias="imageUrl")
-    need_login: bool
-    params: TrainSummaryParams
-    train_type: str = Field(alias="type")
-    url: str
-    word: str
+    date: str
+    from_station: str
+    station_train_code: str
+    to_station: str
+    total_num: str
+    train_no: str
+
+    @property
+    def date_iso(self) -> str:
+        return f"{self.date[:4]}-{self.date[4:6]}-{self.date[6:]}"
+
+    @property
+    def word(self) -> str:
+        return f"{self.station_train_code} {self.from_station}-{self.to_station} | 途经 {self.total_num} 站"
 
 
 class TrainStation(BaseModel):
@@ -73,7 +69,7 @@ class TrainInfo(BaseModel):
     @property
     def date_summary(self) -> str:
         week_names = ["一", "二", "三", "四", "五", "六", "日"]
-        date = datetime.strptime(self.summary.params.date, "%Y-%m-%d")
+        date = datetime.fromisoformat(self.summary.date_iso)
         return f"{date.month} 月 {date.day} 日 周{week_names[date.weekday()]}"
 
     @property
@@ -89,12 +85,13 @@ class TrainInfo(BaseModel):
         if self.arrive_next_day:
             return True
 
-        date = self.summary.params.date
         station = self.stations[station_index]
-        arrive_time = datetime.strptime(
-            f"{date} {station.arrive_time if ':' in station.arrive_time else station.start_time}",
-            "%Y-%m-%d %H:%M",
+        arrive_time_str = (
+            station.arrive_time if ":" in station.arrive_time else station.start_time
+        )
+        arrive_datetime = datetime.fromisoformat(
+            f"{self.summary.date_iso}T{arrive_time_str}",
         ).replace(tzinfo=TZ_SHANGHAI)
         # if (day_diff := int(station.arrive_day_diff)) > 0:
         #     arrive_time += timedelta(days=day_diff)
-        return datetime.now(TZ_SHANGHAI) >= arrive_time
+        return datetime.now(TZ_SHANGHAI) >= arrive_datetime

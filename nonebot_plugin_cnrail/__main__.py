@@ -21,8 +21,9 @@ async def _(matcher: Matcher, arg_msg: Message = CommandArg()):
     try:
         train_info = await query_train_info(train_no)
     except MultipleTrainFoundError as e:
-        info_text = "\n".join(x.word for x in e.trains)
-        await matcher.finish(f"查询到多个车次，请检查您的车次是否正确\n{info_text}")
+        much_text = "\n结果过多，仅显示前五个" if len(e.trains) > 5 else ""
+        info_text = "\n".join(x.word for x in e.trains[5:])
+        await matcher.finish(f"查询到多个车次，请检查您的车次是否正确\n{info_text}{much_text}")
     except Exception:
         logger.exception("Failed to query train info")
         await matcher.finish("查询信息时出现错误，请检查后台输出")
