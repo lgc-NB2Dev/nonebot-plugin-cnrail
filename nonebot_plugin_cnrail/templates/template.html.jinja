@@ -284,12 +284,12 @@
     <div class="main">
       <div class="card-top">
         <div class="card-title">
-          {{ info.station_train_codes.join(" / ") }}
+          {{ " / ".join(info.station_train_codes) }}
         </div>
         <div class="station">
           <div class="station-top">
             <div class="departure-station">
-              <div class="place">{{ info.summary.params.from_station }}</div>
+              <div class="place">{{ info.summary.from_station }}</div>
               <div class="time">
                 <div class="departure-mark">始</div>
                 {{ info.stations[0].start_time }}
@@ -313,7 +313,7 @@
               {%- endif %}
             </div>
             <div class="terminal-station">
-              <div class="place">{{ info.summary.params.to_station }}</div>
+              <div class="place">{{ info.summary.to_station }}</div>
               <div class="time">
                 {{ info.stations[-1].arrive_time }}
                 <div class="terminal-mark">终</div>

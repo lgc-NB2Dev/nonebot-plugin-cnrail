@@ -17,7 +17,6 @@ CHINA_RAIL_DETAIL_API = "https://kyfw.12306.cn/otn/queryTrainInfo/query"
 ACG_IMAGE_URL = "https://www.loliapi.com/acg/pe/"
 
 TEMPLATE_PATH = Path(__file__).parent / "templates" / "template.html.jinja"
-TEMPLATE = jinja2.Template(TEMPLATE_PATH.read_text(encoding="u8"), enable_async=True)
 
 ROUTE_BASE_URL = "https://cnrail.nonebot/"
 ROUTE_IMAGE_URL = f"{ROUTE_BASE_URL}image"
@@ -81,7 +80,11 @@ async def query_train_info(train_code: str) -> Optional[TrainInfo]:
 
 
 async def render_train_info(info: TrainInfo) -> bytes:
-    html = await TEMPLATE.render_async(info=info)
+    template = jinja2.Template(
+        TEMPLATE_PATH.read_text(encoding="u8"),
+        enable_async=True,
+    )
+    html = await template.render_async(info=info)
 
     async def bg_router(route: Route, _: Request):
         async with httpx.AsyncClient(follow_redirects=True) as client:
