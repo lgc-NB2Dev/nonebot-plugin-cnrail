@@ -57,6 +57,13 @@ class TrainInfo(BaseModel):
     _arrive_next_day: Optional[bool] = PrivateAttr(None)
 
     @property
+    def station_train_codes(self) -> List[str]:
+        codes = []
+        for x in (x for x in self.stations if x.station_train_code not in codes):
+            codes.append(x.station_train_code)
+        return codes
+
+    @property
     def total_time(self) -> Tuple[int, int]:
         return cast(
             Any,

@@ -172,7 +172,7 @@
     .time {
       display: flex;
       flex-direction: row;
-      align-items: end;
+      align-items: center;
     }
 
     .station-bottom {
@@ -243,22 +243,24 @@
     }
 
     .station-point {
-      text-align: center;
-      /* for ::after */
       width: 8px;
       height: 8px;
       border-radius: 50%;
       box-shadow: var(--box-shadow);
       background-color: var(--station-table-line-color);
+
+      /* for ::after */
+      --line-height: 31px;
+      text-align: center;
     }
 
     .station-point::after {
       content: '';
       width: 0px;
-      height: 31px;
+      height: var(--line-height);
       position: absolute;
       margin-left: -1px;
-      margin-top: -31px;
+      margin-top: calc(var(--line-height) * -1);
       box-shadow: var(--box-shadow);
       border-left: 2px dashed var(--station-table-line-color);
     }
@@ -282,7 +284,7 @@
     <div class="main">
       <div class="card-top">
         <div class="card-title">
-          {{ info.summary.params.station_train_code }}
+          {{ info.station_train_codes.join(" / ") }}
         </div>
         <div class="station">
           <div class="station-top">
@@ -335,6 +337,7 @@
                 <th>开点</th>
                 <th>到点</th>
                 <th>停留</th>
+                <th>车次</th>
               </tr>
             </thead>
             <tbody>
@@ -353,6 +356,7 @@
                   {%- else %}{{ station.arrive_time }}{% endif -%}
                 </td>
                 <td>{% if loop.first %}始发站{% elif loop.last %}到达站{% else %}{{ station.stay_minutes }} 分{% endif %}</td>
+                <td>{{ station.station_train_code }}</td>
               </tr>
               {% endfor -%}
             </tbody>
@@ -364,8 +368,7 @@
 </body>
 
 <script>
-  // https://github.com/Qix-/color-convert/blob/master/conversions.js
-
+  // #region  https://github.com/Qix-/color-convert/blob/master/conversions.js
   /**
    * @param {[number, number, number]} rgb
    * @returns {[number, number, number]}
@@ -379,33 +382,16 @@
     const delta = max - min;
     let h;
     let s;
-
-    if (max === min) {
-      h = 0;
-    } else if (r === max) {
-      h = (g - b) / delta;
-    } else if (g === max) {
-      h = 2 + (b - r) / delta;
-    } else if (b === max) {
-      h = 4 + (r - g) / delta;
-    }
-
+    if (max === min) h = 0;
+    else if (r === max) h = (g - b) / delta;
+    else if (g === max) h = 2 + (b - r) / delta;
+    else if (b === max) h = 4 + (r - g) / delta;
     h = Math.min(h * 60, 360);
-
-    if (h < 0) {
-      h += 360;
-    }
-
+    if (h < 0) h += 360;
     const l = (min + max) / 2;
-
-    if (max === min) {
-      s = 0;
-    } else if (l <= 0.5) {
-      s = delta / (max + min);
-    } else {
-      s = delta / (2 - max - min);
-    }
-
+    if (max === min) s = 0;
+    else if (l <= 0.5) s = delta / (max + min);
+    else s = delta / (2 - max - min);
     return [h, s * 100, l * 100].map((v) => Math.round(v));
   }
 
@@ -420,65 +406,42 @@
     let t2;
     let t3;
     let val;
-
     if (s === 0) {
       val = l * 255;
       return [val, val, val];
     }
-
-    if (l < 0.5) {
-      t2 = l * (1 + s);
-    } else {
-      t2 = l + s - l * s;
-    }
-
+    if (l < 0.5) t2 = l * (1 + s);
+    else t2 = l + s - l * s;
     const t1 = 2 * l - t2;
-
     const rgb = [0, 0, 0];
     for (let i = 0; i < 3; i++) {
       t3 = h + (1 / 3) * -(i - 1);
-      if (t3 < 0) {
-        t3++;
-      }
-
-      if (t3 > 1) {
-        t3--;
-      }
-
-      if (6 * t3 < 1) {
-        val = t1 + (t2 - t1) * 6 * t3;
-      } else if (2 * t3 < 1) {
-        val = t2;
-      } else if (3 * t3 < 2) {
-        val = t1 + (t2 - t1) * (2 / 3 - t3) * 6;
-      } else {
-        val = t1;
-      }
-
+      if (t3 < 0) t3++;
+      if (t3 > 1) t3--;
+      if (6 * t3 < 1) val = t1 + (t2 - t1) * 6 * t3;
+      else if (2 * t3 < 1) val = t2;
+      else if (3 * t3 < 2) val = t1 + (t2 - t1) * (2 / 3 - t3) * 6;
+      else val = t1;
       rgb[i] = val * 255;
     }
-
     return rgb.map((v) => Math.round(v));
   }
-</script>
+  // #endregion
 
-<script>
-  const htmlWidth = document.querySelector('.bg-wrapper').scrollWidth;
-
+  // #region https://kuangyx.cn/docs/文章/前端/提取图片主题色.html
   /**
-   * https://kuangyx.cn/docs/文章/前端/提取图片主题色.html
    * @param {ImageBitmap} img
    * @param {number} offset color filter offset, pass a <= 0 val to disable
    * @returns {string[]} array of `rNum, gNum, bNum` str
    */
   function getImageThemeColor(img, offset = 16) {
+    const htmlWidth = document.querySelector('.bg-wrapper').scrollWidth;
     const width = htmlWidth;
     const height = (htmlWidth * img.height) / img.width;
     const canvasElem = document.createElement('canvas');
     canvasElem.width = width;
     canvasElem.height = height;
     const ctx = canvasElem.getContext('2d');
-
     ctx.drawImage(img, 0, 0, width, height);
     const pxArr = Array.from(ctx.getImageData(0, 0, width, height).data);
 
@@ -506,28 +469,20 @@
       else colorList[key] = 1;
     }
 
-    const sortedArr = Object.entries(colorList).sort(
-      ([_, a], [__, b]) => b - a
-    );
-    console.log(sortedArr.slice(0, 10));
-    return sortedArr.map((v) => v[0]);
+    return Object.entries(colorList)
+      .sort(([_, a], [__, b]) => b - a)
+      .map((v) => v[0]);
   }
+  // #endregion
 
   /**
    * @param  {...[number, number, number]} colors
    * @returns {[number, number, number]}
    */
   function getAverageColor(...colors) {
-    const r = Math.round(
-      colors.reduce((acc, cur) => acc + cur[0], 0) / colors.length
-    );
-    const g = Math.round(
-      colors.reduce((acc, cur) => acc + cur[1], 0) / colors.length
-    );
-    const b = Math.round(
-      colors.reduce((acc, cur) => acc + cur[2], 0) / colors.length
-    );
-    return [r, g, b];
+    return colors
+      .reduce((acc, cur) => acc.map((val, i) => val + cur[i]), [0, 0, 0])
+      .map((val) => Math.round(val / colors.length));
   }
 
   /**
@@ -572,6 +527,16 @@
     return [newH, newS, newL];
   }
 
+  function adjustLineHeight() {
+    /** @type {NodeListOf<HTMLTableRowElement>} */
+    const trElements = document.querySelectorAll('.station-table tbody tr');
+    for (const trElem of trElements) {
+      const lineHeight = trElem.offsetHeight;
+      const pointElem = trElem.querySelector('.station-point');
+      pointElem.style.setProperty('--line-height', `${lineHeight - 8}px`);
+    }
+  }
+
   async function changeThemeColor() {
     const bgUrl = 'https://cnrail.nonebot/image';
 
@@ -599,7 +564,6 @@
       ` --station-table-arrived-line-color: ${hsl2Str(headHsl)};` +
       ` --station-table-head-color: ${hsl2Str(headHsl)};` +
       ` }`;
-    console.log(cssWillAppend);
 
     const styleElem = document.createElement('style');
     styleElem.innerHTML = cssWillAppend;
@@ -608,6 +572,7 @@
 
   async function main() {
     try {
+      adjustLineHeight();
       await changeThemeColor();
     } catch (e) {
       console.error(e);
