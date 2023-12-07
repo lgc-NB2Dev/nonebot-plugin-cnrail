@@ -36,9 +36,12 @@ _✨ 12306 列车时刻表查询插件 ✨_
 
 </div>
 
+> [!NOTE]
+> 插件仍处于开发状态，如遇到 Bug 可开启 Issue 进行反馈。
+
 ## 📖 介绍
 
-查询 12306 列车时刻表。
+查询 12306 铁路信息 (列车信息 / 车站信息 / 交路图 / etc.)。
 
 ## 💿 安装
 
@@ -136,13 +139,15 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 吹水群：[1105946125](https://jq.qq.com/?_wv=1027&k=Z3n1MpEp)  
 邮箱：<lgc2333@126.com>
 
-<!--
-
 ## 💡 鸣谢
 
-如果有要鸣谢的人的话
+### [海兰德小助手](https://qun.qq.com/qunpro/robot/qunshare?robot_uin=3889001607) & [FindTrain 插件](https://github.com/staytomorrow/FindTrain)
 
--->
+灵感来源
+
+### [12306](https://www.12306.cn)
+
+数据来源
 
 ## 💰 赞助
 
