@@ -25,7 +25,7 @@ _✨ 12306 列车时刻表查询插件 ✨_
 <br />
 
 <a href="./LICENSE">
-  <img src="https://img.shields.io/github/license/XieXiLin2/nonebot-plugin-cnrail.svg" alt="license">
+  <img src="https://img.shields.io/github/license/lgc-NB2Dev/nonebot-plugin-cnrail.svg" alt="license">
 </a>
 <a href="https://pypi.python.org/pypi/nonebot-plugin-cnrail">
   <img src="https://img.shields.io/pypi/v/nonebot-plugin-cnrail.svg" alt="pypi">
