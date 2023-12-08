@@ -10,7 +10,7 @@
   <img src="https://raw.githubusercontent.com/A-kirami/nonebot-plugin-template/resources/NoneBotPlugin.svg" width="240" alt="NoneBotPluginText">
 </p>
 
-# NoneBot-Plugin_CNRail
+# NoneBot-Plugin-CNRail
 
 _✨ 12306 列车时刻表查询插件 ✨_
 
