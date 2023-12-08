@@ -355,7 +355,7 @@
                   {%- if station.arrive_time.startswith("-") %}{{ station.start_time }}
                   {%- else %}{{ station.arrive_time }}{% endif -%}
                 </td>
-                <td>{% if loop.first %}始发站{% elif loop.last %}到达站{% else %}{{ station.stay_minutes }} 分{% endif %}</td>
+                <td>{% if loop.first %}始发站{% elif loop.last %}终点站{% else %}{{ station.stay_minutes }} 分{% endif %}</td>
                 <td>{{ station.station_train_code }}</td>
               </tr>
               {% endfor -%}
