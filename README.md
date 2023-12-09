@@ -120,7 +120,7 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 
 ## 💡 鸣谢
 
-### [海兰德小助手](https://qun.qq.com/qunpro/robot/qunshare?robot_uin=3889001607) & [FindTrain 插件](https://github.com/staytomorrow/FindTrain)
+### [海兰德小助手](https://qun.qq.com/qunpro/robot/qunshare?robot_uin=3889001607) & [Train-QQbot 插件](https://github.com/staytomorrow/FindTrain)
 
 灵感来源
 
