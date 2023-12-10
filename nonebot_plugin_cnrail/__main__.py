@@ -52,7 +52,7 @@ async def _(
         await matcher.finish("查询信息时出现错误，请检查后台输出")
 
     if not train_info:
-        await matcher.finish("未查询到车次，可能是当日未开行，请检查您的车次是否正确")
+        await matcher.finish("未查询到车次，可能是当日未开行，请检查您的车次是否正确\n(可查询日期范围为前二日 ~ 后十四日)")
 
     try:
         img_bytes = await render_train_info(train_info)
