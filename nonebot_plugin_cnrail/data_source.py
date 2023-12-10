@@ -28,16 +28,22 @@ class MultipleTrainFoundError(Exception):
         super().__init__(trains)
 
 
-async def query_train_info(train_code: str) -> Optional[TrainInfo]:
+async def query_train_info(
+    train_code: str,
+    train_date: Optional[str],
+) -> Optional[TrainInfo]:
     train_code = train_code.upper()
-    today_date = date.today().isoformat()
+    if train_date:
+        train_date = date.fromisoformat(train_date).isoformat()
+    else:
+        train_date = date.today().isoformat()
 
     async with httpx.AsyncClient(follow_redirects=True) as client:
         resp = await client.get(
             CHINA_RAIL_SEARCH_API,
             params={
                 "keyword": train_code,
-                "date": today_date.replace("-", ""),
+                "date": train_date.replace("-", ""),
             },
         )
         resp.raise_for_status()
@@ -65,7 +71,7 @@ async def query_train_info(train_code: str) -> Optional[TrainInfo]:
             CHINA_RAIL_DETAIL_API,
             params={
                 "leftTicketDTO.train_no": summary.train_no,
-                "leftTicketDTO.train_date": today_date,
+                "leftTicketDTO.train_date": train_date,
                 "rand_code": "",
             },
         )
