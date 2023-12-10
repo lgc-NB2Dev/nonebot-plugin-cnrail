@@ -45,7 +45,7 @@ async def _(
         await matcher.finish(f"查询到多个车次，请检查您的车次是否正确\n{info_text}{much_text}")
     except ValueError:
         await matcher.finish("日期格式错误，日期应为 YYYY-MM-DD 格式")
-    except TimeoutError:
+    except TimeoutException:
         await matcher.finish("查询超时，请稍后重试")
     except Exception:
         logger.exception("Failed to query train info")
