@@ -1,4 +1,3 @@
-from datetime import date
 from pathlib import Path
 from typing import List, Optional
 
@@ -18,7 +17,7 @@ ACG_IMAGE_URL = "https://www.loliapi.com/acg/pe/"
 
 TEMPLATE_PATH = Path(__file__).parent / "templates" / "template.html.jinja"
 
-ROUTE_BASE_URL = "https://cnrail.nonebot/"
+ROUTE_BASE_URL = "https://rail.re/"
 ROUTE_IMAGE_URL = f"{ROUTE_BASE_URL}image"
 
 
@@ -30,13 +29,9 @@ class MultipleTrainFoundError(Exception):
 
 async def query_train_info(
     train_code: str,
-    train_date: Optional[str],
+    train_date: str,
 ) -> Optional[TrainInfo]:
     train_code = train_code.upper()
-    if train_date:
-        train_date = date.fromisoformat(train_date).isoformat()
-    else:
-        train_date = date.today().isoformat()
 
     async with httpx.AsyncClient(follow_redirects=True) as client:
         resp = await client.get(

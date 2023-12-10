@@ -4,7 +4,7 @@ dynamic = ["version"]
 description = "NoneBot2 plugin for query the train time table"
 authors = [
     { name = "student_2333", email = "lgc2333@126.com" },
-    { name = "XieXiLin2", email = "support@xiexilin.com" },
+    { name = "XieXiLin", email = "support@xiexilin.com" },
 ]
 dependencies = [
     "nonebot2>=2.1.2",
