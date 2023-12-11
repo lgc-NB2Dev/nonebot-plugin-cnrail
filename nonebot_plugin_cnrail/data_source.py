@@ -17,7 +17,7 @@ ACG_IMAGE_URL = "https://www.loliapi.com/acg/pe/"
 
 TEMPLATE_PATH = Path(__file__).parent / "templates" / "template.html.jinja"
 
-ROUTE_BASE_URL = "https://rail.re/"
+ROUTE_BASE_URL = "https://cnrail.nonebot/"
 ROUTE_IMAGE_URL = f"{ROUTE_BASE_URL}image"
 
 
@@ -27,10 +27,7 @@ class MultipleTrainFoundError(Exception):
         super().__init__(trains)
 
 
-async def query_train_info(
-    train_code: str,
-    train_date: str,
-) -> Optional[TrainInfo]:
+async def query_train_info(train_code: str, train_date: str) -> Optional[TrainInfo]:
     train_code = train_code.upper()
 
     async with httpx.AsyncClient(follow_redirects=True) as client:
