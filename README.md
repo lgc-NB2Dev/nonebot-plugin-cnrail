@@ -142,6 +142,10 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 
 ## 📝 更新日志
 
+### 0.1.3
+
+- fix [#2](https://github.com/lgc-NB2Dev/nonebot-plugin-cnrail/issues/2)
+
 ### 0.1.2
 
 - 支持选择日期查询（日期范围为前二日 ~ 后十四日）

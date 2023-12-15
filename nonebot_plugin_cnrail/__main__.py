@@ -15,14 +15,16 @@ from .data_source import MultipleTrainFoundError, query_train_info, render_train
 def parse_date(date_str: str) -> date:
     for x in string.whitespace:
         date_str = date_str.replace(x, "")
-    today = datetime.today()
+    today_date = date.today()
 
     def parse(df: str) -> Optional[date]:
         with suppress(ValueError):
-            parsed = datetime.strptime(date_str, df).replace(year=today.year)
-            if parsed < today:
-                parsed = parsed.replace(year=today.year + 1)
-            return parsed.date()
+            parsed = (
+                datetime.strptime(date_str, df).replace(year=today_date.year).date()
+            )
+            if parsed < today_date:
+                parsed = parsed.replace(year=today_date.year + 1)
+            return parsed
         return None
 
     date_formats = ("%m/%d", "%m-%d", "%m月%d日", "%m月%d号", "%m月%d")
