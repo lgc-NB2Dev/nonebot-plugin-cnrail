@@ -39,7 +39,7 @@ search_train_info = on_alconna(
         Args["train", str]["date?", str],
         meta=CommandMeta(
             description="查询列车信息",
-            usage="train <车次> [日期（只包含月和日）]",
+            usage="train <车次> [日期（可选，只包含月和日）]",
             example="train G1 12-10",
         ),
     ),
