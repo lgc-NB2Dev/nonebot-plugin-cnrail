@@ -142,6 +142,10 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 
 ## 📝 更新日志
 
+### 0.1.4
+
+- 现在缺少参数会提示了
+
 ### 0.1.3
 
 - fix [#2](https://github.com/lgc-NB2Dev/nonebot-plugin-cnrail/issues/2)

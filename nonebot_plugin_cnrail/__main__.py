@@ -3,11 +3,11 @@ from contextlib import suppress
 from datetime import date, datetime
 from typing import Optional
 
-from arclet.alconna import Alconna, Args, CommandMeta
+from arclet.alconna import Alconna, Args, Arparma, CommandMeta
 from httpx import TimeoutException
 from nonebot import logger
-from nonebot_plugin_alconna import AlconnaMatcher, Query, on_alconna
-from nonebot_plugin_alconna.uniseg import Image, UniMessage
+from nonebot_plugin_alconna import AlconnaMatcher, on_alconna
+from nonebot_plugin_alconna.uniseg import UniMessage
 
 from .data_source import MultipleTrainFoundError, query_train_info, render_train_info
 
@@ -44,19 +44,21 @@ search_train_info = on_alconna(
         ),
     ),
     aliases={"列车信息", "查询列车"},
-    auto_send_output=True,
+    skip_for_unmatch=False,
     use_cmd_start=True,
 )
 
 
 @search_train_info.handle()
-async def _(
-    matcher: AlconnaMatcher,
-    train_no_query: Query[str] = Query("train"),
-    date_query: Query[Optional[str]] = Query("date", None),
-):
-    train_no: str = train_no_query.result
-    train_date: Optional[str] = date_query.result
+async def _(matcher: AlconnaMatcher, parma: Arparma):
+    if parma.error_info:
+        await matcher.finish(f"{parma.error_info}\n使用指令 `train -h` 查看帮助")
+
+
+@search_train_info.handle()
+async def _(matcher: AlconnaMatcher, parma: Arparma):
+    train_no: str = parma["train"]
+    train_date: Optional[str] = parma["date"]
 
     try:
         date_obj = parse_date(train_date) if train_date else date.today()
@@ -85,5 +87,4 @@ async def _(
         logger.exception("Failed to render train info")
         await matcher.finish("渲染图片时出现错误，请检查后台输出")
 
-    await UniMessage(Image(raw=img_bytes)).send(reply_to=True)
-    await matcher.finish()
+    await matcher.finish(UniMessage.image(raw=img_bytes))
