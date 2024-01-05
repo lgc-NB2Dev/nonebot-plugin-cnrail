@@ -4,9 +4,10 @@ from datetime import date, datetime
 from typing import Optional
 
 from arclet.alconna import Alconna, Args, Arparma, CommandMeta
+from arclet.alconna.exceptions import SpecialOptionTriggered
 from httpx import TimeoutException
 from nonebot import logger
-from nonebot_plugin_alconna import AlconnaMatcher, on_alconna
+from nonebot_plugin_alconna import AlconnaMatcher, CommandResult, on_alconna
 from nonebot_plugin_alconna.uniseg import UniMessage
 
 from .data_source import MultipleTrainFoundError, query_train_info, render_train_info
@@ -50,9 +51,12 @@ search_train_info = on_alconna(
 
 
 @search_train_info.handle()
-async def _(matcher: AlconnaMatcher, parma: Arparma):
-    if parma.error_info:
-        await matcher.finish(f"{parma.error_info}\n使用指令 `train -h` 查看帮助")
+async def _(matcher: AlconnaMatcher, res: CommandResult):
+    if not res.result.error_info:
+        return
+    if isinstance(res.result.error_info, SpecialOptionTriggered):
+        await matcher.finish(res.output)
+    await matcher.finish(f"{res.result.error_info}\n使用指令 `train -h` 查看帮助")
 
 
 @search_train_info.handle()
