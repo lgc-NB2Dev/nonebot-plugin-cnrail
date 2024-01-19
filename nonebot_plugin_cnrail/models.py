@@ -49,6 +49,7 @@ class TrainStation(BaseModel):
 class TrainInfo(BaseModel):
     summary: TrainSummary
     stations: List[TrainStation]
+    maintancer: str
 
     _arrive_next_day: Optional[bool] = PrivateAttr(None)
 

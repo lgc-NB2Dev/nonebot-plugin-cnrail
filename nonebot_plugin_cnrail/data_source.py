@@ -13,6 +13,8 @@ from .models import TrainInfo, TrainStation, TrainSummary
 CHINA_RAIL_SEARCH_API = "https://search.12306.cn/search/v1/train/search"
 CHINA_RAIL_DETAIL_API = "https://kyfw.12306.cn/otn/queryTrainInfo/query"
 
+CNRAIL_DATA_BASE_URL = "https://cnrail-data.baka.pub/data/"
+
 ACG_IMAGE_URL = "https://www.loliapi.com/acg/pe/"
 
 TEMPLATE_PATH = Path(__file__).parent / "templates" / "template.html.jinja"
@@ -42,7 +44,28 @@ async def query_train_info(train_code: str, train_date: str) -> Optional[TrainIn
 
     raw_data = resp.json()["data"]
     if not raw_data:
-        return None
+        async with httpx.AsyncClient(
+            base_url=CNRAIL_DATA_BASE_URL,
+            follow_redirects=True,
+        ) as client:
+            resp = await client.get("/alias.json")
+            resp.raise_for_status()
+
+        train_code = resp.json()[train_code]
+
+        async with httpx.AsyncClient(follow_redirects=True) as client:
+            resp = await client.get(
+                CHINA_RAIL_SEARCH_API,
+                params={
+                    "keyword": train_code,
+                    "date": train_date.replace("-", ""),
+                },
+            )
+            resp.raise_for_status()
+
+        raw_data = resp.json()["data"]
+        if not raw_data:
+            return None
 
     data = parse_obj_as(List[TrainSummary], raw_data)
     if len(data) > 1:
@@ -74,7 +97,16 @@ async def query_train_info(train_code: str, train_date: str) -> Optional[TrainIn
         return None
 
     stations = parse_obj_as(List[TrainStation], raw_data)
-    return TrainInfo(summary=summary, stations=stations)
+
+    async with httpx.AsyncClient(
+        base_url=CNRAIL_DATA_BASE_URL, follow_redirects=True
+    ) as client:
+        resp = await client.get("/maintance.json")
+        resp.raise_for_status()
+
+    maintancer = resp.json()[train_code]
+
+    return TrainInfo(summary=summary, stations=stations, maintancer=maintancer)
 
 
 async def render_train_info(info: TrainInfo) -> bytes:
