@@ -99,7 +99,8 @@ async def query_train_info(train_code: str, train_date: str) -> Optional[TrainIn
     stations = parse_obj_as(List[TrainStation], raw_data)
 
     async with httpx.AsyncClient(
-        base_url=CNRAIL_DATA_BASE_URL, follow_redirects=True
+        base_url=CNRAIL_DATA_BASE_URL,
+        follow_redirects=True,
     ) as client:
         resp = await client.get("/maintance.json")
         resp.raise_for_status()
