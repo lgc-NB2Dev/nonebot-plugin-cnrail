@@ -32,27 +32,7 @@ class MultipleTrainFoundError(Exception):
 async def query_train_info(train_code: str, train_date: str) -> Optional[TrainInfo]:
     train_code = train_code.upper()
 
-    async with httpx.AsyncClient(follow_redirects=True) as client:
-        resp = await client.get(
-            CHINA_RAIL_SEARCH_API,
-            params={
-                "keyword": train_code,
-                "date": train_date.replace("-", ""),
-            },
-        )
-        resp.raise_for_status()
-
-    raw_data = resp.json()["data"]
-    if not raw_data:
-        async with httpx.AsyncClient(
-            base_url=CNRAIL_DATA_BASE_URL,
-            follow_redirects=True,
-        ) as client:
-            resp = await client.get("/alias.json")
-            resp.raise_for_status()
-
-        train_code = resp.json()[train_code]
-
+    async def get_search_data(train_code: str, train_date: str) -> Optional[List]:
         async with httpx.AsyncClient(follow_redirects=True) as client:
             resp = await client.get(
                 CHINA_RAIL_SEARCH_API,
@@ -63,7 +43,20 @@ async def query_train_info(train_code: str, train_date: str) -> Optional[TrainIn
             )
             resp.raise_for_status()
 
-        raw_data = resp.json()["data"]
+        return resp.json()["data"]
+
+    raw_data = await get_search_data(train_code=train_code, train_date=train_date)
+    if not raw_data:
+        async with httpx.AsyncClient(
+            base_url=CNRAIL_DATA_BASE_URL,
+            follow_redirects=True,
+        ) as client:
+            resp = await client.get("/alias.json")
+            resp.raise_for_status()
+
+        train_code = resp.json()[train_code]
+
+        raw_data = await get_search_data(train_code=train_code, train_date=train_date)
         if not raw_data:
             return None
 
