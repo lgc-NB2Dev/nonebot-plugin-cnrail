@@ -80,7 +80,10 @@ async def query_train_info(train_code: str, train_date: str) -> Optional[TrainIn
             resp = await client.get("/alias.json")
             resp.raise_for_status()
 
-        train_code = resp.json()[train_code]
+        try:
+            train_code = resp.json()[train_code]
+        except KeyError:
+            return None
 
         raw_data = await get_search_data(train_code=train_code, train_date=train_date)
         if not raw_data:
