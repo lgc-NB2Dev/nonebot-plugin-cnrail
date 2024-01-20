@@ -109,7 +109,7 @@ plugins = [
 
 ### 效果图
 
-![效果图](https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/cnrail/c6837.jpg)
+![效果图](https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/cnrail/g3720.png)
 
 ## 📞 联系
 
