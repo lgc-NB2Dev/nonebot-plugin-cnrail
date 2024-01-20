@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import List, Optional
+from datetime import datetime
 
 import httpx
 import jinja2
@@ -12,12 +13,13 @@ from .models import TrainInfo, TrainStation, TrainSummary
 
 CHINA_RAIL_SEARCH_API = "https://search.12306.cn/search/v1/train/search"
 CHINA_RAIL_DETAIL_API = "https://kyfw.12306.cn/otn/queryTrainInfo/query"
+RAIL_RE_API = "https://api.rail.re/"
 
 CNRAIL_DATA_BASE_URL = "https://cnrail-data.baka.pub/data/"
 
 ACG_IMAGE_URL = "https://www.loliapi.com/acg/pe/"
 
-TEMPLATE_PATH = Path(__file__).parent / "templates" / "template.html.jinja"
+TEMPLATE_PATH = Path(__file__).parent / "templates" / "train_table.html.jinja"
 
 ROUTE_BASE_URL = "https://cnrail.nonebot/"
 ROUTE_IMAGE_URL = f"{ROUTE_BASE_URL}image"
@@ -27,6 +29,30 @@ class MultipleTrainFoundError(Exception):
     def __init__(self, trains: List[TrainSummary]) -> None:
         self.trains = trains
         super().__init__(trains)
+
+
+async def query_emu_from_train_code(train_code: str) -> Optional[List]:
+    async with httpx.AsyncClient(base_url=RAIL_RE_API, follow_redirects=True) as client:
+        resp = await client.get(f"/train/{train_code}")
+        resp.raise_for_status()
+
+    data = resp.json()
+    if not data:
+        return None
+
+    return data
+
+
+async def query_emu_from_emu_no(emu_no: str) -> Optional[List]:
+    async with httpx.AsyncClient(base_url=RAIL_RE_API, follow_redirects=True) as client:
+        resp = await client.get(f"/emu/{emu_no}")
+        resp.raise_for_status()
+
+    data = resp.json()
+    if not data:
+        return None
+
+    return data
 
 
 async def query_train_info(train_code: str, train_date: str) -> Optional[TrainInfo]:
@@ -100,7 +126,25 @@ async def query_train_info(train_code: str, train_date: str) -> Optional[TrainIn
 
     maintancer = resp.json()[train_code]
 
-    return TrainInfo(summary=summary, stations=stations, maintancer=maintancer)
+    today_date = datetime.today().date()
+    train_date_obj = datetime.strptime(train_date, "%Y-%m-%d").date()
+
+    emu_no = None
+
+    if (train_date_obj <= today_date) and (
+        emu_data := await query_emu_from_train_code(train_code)
+    ):
+        for i in emu_data:
+            if datetime.strptime(i["date"], "%Y-%m-%d %H:%M").date() == train_date_obj:
+                emu_no = i["emu_no"]
+                break
+
+    return TrainInfo(
+        summary=summary,
+        stations=stations,
+        maintancer=maintancer,
+        emu_no=emu_no,
+    )
 
 
 async def render_train_info(info: TrainInfo) -> bytes:

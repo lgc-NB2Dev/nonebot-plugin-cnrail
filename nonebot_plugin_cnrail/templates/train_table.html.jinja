@@ -179,11 +179,20 @@
       border-top: 1px solid var(--split-line-color);
       margin: 10px 20px;
       padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
     }
 
     .admin {
-      font-size: 12px;
-      color: var(--top-sub-color);
+        font-size: 12px;
+        color: var(--top-sub-color);
+        text-align: left;
+    }
+
+    .emu_no {
+        font-size: 12px;
+        color: var(--top-sub-color);
+        text-align: right;
     }
 
     .card-bottom {
@@ -322,6 +331,9 @@
           </div>
           <div class="station-bottom">
             <div class="admin">担当路局：{{ info.maintancer }}</div>
+            {%- if info.emu_no -%}
+            <div class="emu_no">车组号：{{ info.emu_no }}</div>
+            {%- endif %}
           </div>
         </div>
       </div>
