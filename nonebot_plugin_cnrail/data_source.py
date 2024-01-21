@@ -4,6 +4,7 @@ from typing import List, Optional
 
 import httpx
 import jinja2
+import pytz
 from nonebot import logger
 from nonebot_plugin_htmlrender import get_new_page
 from playwright.async_api import Request, Route
@@ -23,6 +24,8 @@ TEMPLATE_PATH = Path(__file__).parent / "templates" / "train_table.html.jinja"
 
 ROUTE_BASE_URL = "https://cnrail.nonebot/"
 ROUTE_IMAGE_URL = f"{ROUTE_BASE_URL}image"
+
+TZ_SHANGHAI = pytz.timezone("Asia/Shanghai")
 
 
 class MultipleTrainFoundError(Exception):
@@ -129,7 +132,7 @@ async def query_train_info(train_code: str, train_date: str) -> Optional[TrainIn
 
     maintancer = resp.json()[train_code]
 
-    today_date = datetime.today().date()
+    today_date = datetime.now(TZ_SHANGHAI).date()
     train_date_obj = datetime.strptime(train_date, "%Y-%m-%d").date()
 
     emu_no = None
