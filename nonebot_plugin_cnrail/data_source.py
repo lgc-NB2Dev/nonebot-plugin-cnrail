@@ -133,7 +133,9 @@ async def query_train_info(train_code: str, train_date: str) -> Optional[TrainIn
     maintancer = resp.json()[train_code]
 
     today_date = datetime.now(TZ_SHANGHAI).date()
-    train_date_obj = datetime.strptime(train_date, "%Y-%m-%d").date()
+    train_date_obj = (
+        datetime.strptime(train_date, "%Y-%m-%d").replace(tzinfo=TZ_SHANGHAI).date()
+    )
 
     emu_no = None
 
@@ -141,7 +143,12 @@ async def query_train_info(train_code: str, train_date: str) -> Optional[TrainIn
         emu_data := await query_emu_from_train_code(train_code)
     ):
         for i in emu_data:
-            if datetime.strptime(i["date"], "%Y-%m-%d %H:%M").date() == train_date_obj:
+            date_data = (
+                datetime.strptime(i["date"], "%Y-%m-%d %H:%M")
+                .replace(tzinfo=TZ_SHANGHAI)
+                .date()
+            )
+            if date_data == train_date_obj:
                 emu_no = i["emu_no"]
                 break
 

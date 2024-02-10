@@ -14,14 +14,15 @@ from .data_source import MultipleTrainFoundError, query_train_info, render_train
 
 
 def parse_date(date_str: str) -> date:
+    # use local timezone
     for x in string.whitespace:
         date_str = date_str.replace(x, "")
-    today_date = date.today()
+    today_date = date.today()  # noqa: DTZ011
 
     def parse(df: str) -> Optional[date]:
         with suppress(ValueError):
             parsed = (
-                datetime.strptime(date_str, df).replace(year=today_date.year).date()
+                datetime.strptime(date_str, df).replace(year=today_date.year).date()  # noqa: DTZ007
             )
             if parsed < today_date:
                 parsed = parsed.replace(year=today_date.year + 1)
@@ -65,7 +66,8 @@ async def _(matcher: AlconnaMatcher, parma: Arparma):
     train_date: Optional[str] = parma["date"]
 
     try:
-        date_obj = parse_date(train_date) if train_date else date.today()
+        # use local timezone
+        date_obj = parse_date(train_date) if train_date else date.today()  # noqa: DTZ011
     except ValueError:
         await matcher.finish("日期格式不正确")
 
@@ -74,7 +76,9 @@ async def _(matcher: AlconnaMatcher, parma: Arparma):
     except MultipleTrainFoundError as e:
         much_text = "\n结果过多，仅显示前五个" if len(e.trains) > 5 else ""
         info_text = "\n".join(x.word for x in e.trains[:5])
-        await matcher.finish(f"查询到多个车次，请检查您的车次是否正确\n{info_text}{much_text}")
+        await matcher.finish(
+            f"查询到多个车次，请检查您的车次是否正确\n{info_text}{much_text}",
+        )
     except TimeoutException:
         await matcher.finish("查询超时，请稍后重试")
     except Exception:
@@ -82,8 +86,12 @@ async def _(matcher: AlconnaMatcher, parma: Arparma):
         await matcher.finish("查询信息时出现错误，请检查后台输出")
 
     if not train_info:
-        with_date_tip = "\n（可查询日期范围一般为前二日 ~ 后十四日）" if train_date else ""
-        await matcher.finish(f"未查询到车次，可能是当日未开行，请检查您的车次是否正确{with_date_tip}")
+        with_date_tip = (
+            "\n（可查询日期范围一般为前二日 ~ 后十四日）" if train_date else ""
+        )
+        await matcher.finish(
+            f"未查询到车次，可能是当日未开行，请检查您的车次是否正确{with_date_tip}",
+        )
 
     try:
         img_bytes = await render_train_info(train_info)

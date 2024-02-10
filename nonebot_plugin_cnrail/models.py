@@ -39,8 +39,12 @@ class TrainStation(BaseModel):
 
     @property
     def stay_minutes(self) -> int:
-        arrive_t = datetime.strptime(self.arrive_time, "%H:%M")
-        start_t = datetime.strptime(self.start_time, "%H:%M")
+        arrive_t = datetime.strptime(self.arrive_time, "%H:%M").replace(
+            tzinfo=TZ_SHANGHAI,
+        )
+        start_t = datetime.strptime(self.start_time, "%H:%M").replace(
+            tzinfo=TZ_SHANGHAI,
+        )
         if arrive_t > start_t:
             start_t += timedelta(days=1)
         return (start_t - arrive_t).seconds // 60
@@ -58,7 +62,7 @@ class TrainInfo(BaseModel):
     def station_train_codes(self) -> List[str]:
         codes = []
         for x in (x for x in self.stations if x.station_train_code not in codes):
-            codes.append(x.station_train_code)
+            codes.append(x.station_train_code)  # noqa: PERF401
         return codes
 
     @property
