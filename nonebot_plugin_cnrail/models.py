@@ -2,8 +2,7 @@ from datetime import datetime, timedelta
 from typing import Any, List, Optional, Tuple, cast
 
 import pytz
-from pydantic.fields import PrivateAttr
-from pydantic.main import BaseModel, Field
+from pydantic import BaseModel, Field, PrivateAttr
 
 TZ_SHANGHAI = pytz.timezone("Asia/Shanghai")
 

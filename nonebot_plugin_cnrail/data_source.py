@@ -6,9 +6,9 @@ import httpx
 import jinja2
 import pytz
 from nonebot import logger
+from nonebot.compat import type_validate_python
 from nonebot_plugin_htmlrender import get_new_page
 from playwright.async_api import Request, Route
-from pydantic.tools import parse_obj_as
 
 from .models import TrainInfo, TrainStation, TrainSummary
 
@@ -92,7 +92,7 @@ async def query_train_info(train_code: str, train_date: str) -> Optional[TrainIn
         if not raw_data:
             return None
 
-    data = parse_obj_as(List[TrainSummary], raw_data)
+    data = type_validate_python(List[TrainSummary], raw_data)
     if len(data) > 1:
         summary = next(
             (train for train in data if train.station_train_code == train_code),
@@ -121,7 +121,7 @@ async def query_train_info(train_code: str, train_date: str) -> Optional[TrainIn
     if not raw_data:
         return None
 
-    stations = parse_obj_as(List[TrainStation], raw_data)
+    stations = type_validate_python(List[TrainStation], raw_data)
 
     async with httpx.AsyncClient(
         base_url=CNRAIL_DATA_BASE_URL,
@@ -166,6 +166,8 @@ async def render_train_info(info: TrainInfo) -> bytes:
         enable_async=True,
     )
     html = await template.render_async(info=info)
+    if (dbg := Path.cwd() / "cnrail-debug.html").exists():
+        dbg.write_text(html, encoding="u8")
 
     async def bg_router(route: Route, _: Request):
         async with httpx.AsyncClient(follow_redirects=True) as client:
