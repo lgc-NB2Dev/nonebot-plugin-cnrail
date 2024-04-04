@@ -299,25 +299,8 @@
                 {{ summary.departure_time }}
               </div>
             </div>
-            {# <div class="arrow-box">
-              {% set total_time = info.total_time -%}
-              {%- if info.arrive_next_day -%}
-              <div class="duration">历时 {{ total_time[0] }} 时 {{ total_time[1] }} 分</div>
-              <div class="arrow-icon">
-                <div class="line"></div>
-                <div class="triangle"></div>
-              </div>
-              {%- else -%}
-              <div class="date">{{ info.date_summary }}</div>
-              <div class="arrow-icon">
-                <div class="line"></div>
-                <div class="triangle"></div>
-              </div>
-              <div class="duration">历时 {{ total_time[0] }} 时 {{ total_time[1] }} 分</div>
-              {%- endif %}
-            </div> #}
             <div class="arrow-box">
-              <div class="duration">历时 {{ summary.duration_minutes }} 分</div>
+              <div class="duration">历时 {{ summary.pass_time }}</div>
               <div class="arrow-icon">
                 <div class="line"></div>
                 <div class="triangle"></div>
@@ -366,10 +349,10 @@
                 </td>
                 <td>{{ station.station_name }}</td>
                 <td>
-                  {% if loop.first %}始发站{% else %}{{ station.arrival_time}}{% endif %}
+                  {% if loop.first %}-{% else %}{{ station.arrival_time}}{% endif %}
                 </td>
                 <td>
-                  {% if loop.last %}终点站{% else %}{{ station.departure_time }}{% endif %}
+                  {% if loop.last %}-{% else %}{{ station.departure_time }}{% endif %}
                 </td>
                 <td>{% if loop.first %}始发站{% elif loop.last %}终点站{% else %}{{ station.stop_minutes }} 分{% endif %}</td>
                 <td>{{ station.train_number }}</td>

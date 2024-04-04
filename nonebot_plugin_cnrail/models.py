@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import List, Optional, Union
 
 from pydantic import BaseModel, Field
@@ -16,6 +17,15 @@ class TrainSearchData(BaseModel):
     train_type: str = Field(alias="trainType")
     cr_type: int = Field(alias="crType")
     out_of_date_flag: int = Field(alias="outOfDateFlag")
+
+    @property
+    def pass_time(self) -> str:
+        start_datetime = datetime.strptime(self.departure_time, "%H:%M")
+        end_datetime = datetime.strptime(self.arrival_time, "%H:%M")
+        if end_datetime < start_datetime:
+            end_datetime += timedelta(days=1)
+        time_difference = end_datetime - start_datetime
+        return f"{(str(self.day_count - 1 + time_difference.days) + ' 天') if (self.day_count - 1 + time_difference.days) > 0 else ''} {time_difference.seconds // 3600} 时 {time_difference.seconds % 3600 // 60} 分"
 
 
 class TrainSearchResult(BaseModel):
