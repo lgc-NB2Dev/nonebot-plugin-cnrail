@@ -9,11 +9,10 @@ from nonebot.compat import type_validate_python
 from nonebot_plugin_htmlrender import get_new_page
 from playwright.async_api import Request, Route
 
+from .config import config
 from .models import ReturnData, TrainDetailData, TrainSearchResult, TrainSNData
 
 MOERAIL_API_BASE = "https://train.moefactory.com/api/"
-
-ACG_IMAGE_URL = "https://www.loliapi.com/acg/pe/"
 
 TEMPLATE_PATH = Path(__file__).parent / "templates" / "train_table.html.jinja"
 
@@ -119,7 +118,12 @@ async def query_train_info(
 
     sn_data = await get_train_sn(train_code)
 
-    return ReturnData(search=search_data, datail=datail_data, sn=sn_data)
+    return ReturnData(
+        search=search_data,
+        datail=datail_data,
+        sn=sn_data,
+        train_date=train_date,
+    )
 
 
 async def render_train_info(return_data: ReturnData, train_date: str) -> bytes:
@@ -135,13 +139,14 @@ async def render_train_info(return_data: ReturnData, train_date: str) -> bytes:
             if return_data.sn
             else None
         ),
+        train_date=return_data.train_date,
     )
     if (dbg := Path.cwd() / "cnrail-debug.html").exists():
         dbg.write_text(html, encoding="u8")
 
     async def bg_router(route: Route, _: Request):
         async with httpx.AsyncClient(follow_redirects=True) as client:
-            resp = await client.get(ACG_IMAGE_URL, follow_redirects=True)
+            resp = await client.get(config.CNRAIL_ACG_IMAGE_URL, follow_redirects=True)
         try:
             resp.raise_for_status()
         except Exception:

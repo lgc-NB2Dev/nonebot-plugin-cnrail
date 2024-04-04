@@ -104,7 +104,9 @@ plugins = [
 
 ## ⚙️ 配置
 
-暂无
+|         配置项         | 必填 |              默认值               |              说明              |
+| :--------------------: | :--: | :-------------------------------: | :----------------------------: |
+| `CNRAIL_ACG_IMAGE_URL` |  否  | `https://www.loliapi.com/acg/pe/` | 用于指令返回图片背景的图片 URL |
 
 ## 🎉 使用
 
@@ -144,6 +146,11 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
   </details>
 
 ## 📝 更新日志
+
+### 0.2.1
+
+- 适配 [MoeFactory API](https://train.moefactory.com)
+- 新增配置项 `CNRAIL_ACG_IMAGE_URL`
 
 ### 0.2.0
 

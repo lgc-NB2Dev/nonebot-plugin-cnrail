@@ -343,9 +343,8 @@
               {% for station in detail.via_stations -%}
               <tr>
                 <td>
-                  {#
-                  <div class="station-point{% if info.arrived(loop.index0) %} arrived{% endif %}"></div>
-                  等待 model 侧重新实现，摆 #}
+
+                  <div class="station-point{% if detail.arrived(loop.index0, train_date) %} arrived{% endif %}"></div>
                 </td>
                 <td>{{ station.station_name }}</td>
                 <td>
