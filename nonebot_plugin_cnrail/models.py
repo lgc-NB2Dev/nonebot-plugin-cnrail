@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import List, Optional, Union
-
+from nonebot.log import logger
 import pytz
 from pydantic import BaseModel, Field
 
@@ -90,26 +90,23 @@ class TrainDetailData(BaseModel):
     routing: TrainDetailRouing
 
     def arrived(self, station_index: int, train_date: str) -> bool:  # 有待修改
-        # logger.debug(f"index: {station_index}, date: {train_date}")
-        # station = self.via_stations[station_index]
-        # arrive_time_str = (
-        #     station.arrival_time
-        #     if station.arrival_time is not None
-        #     else station.departure_time
-        # )
-        # arrive_datetime = (
-        #     datetime.fromisoformat(
-        #         f"{train_date}T{arrive_time_str}",
-        #     )
-        #     + timedelta(days=station.day_index)
-        # ).replace(tzinfo=TZ_SHANGHAI)
-        # if (arrive_datetime.month + 12 * (arrive_datetime.year - datetime.today().year)) > 3:
-        #     arrive_datetime = arrive_datetime.replace(year=arrive_datetime.year - 1)
-        # logger.debug(
-        #     f"arrive: {arrive_time_str}, arrive_datetime: {arrive_datetime}, now: {datetime.now(TZ_SHANGHAI)}, bool: {datetime.now(TZ_SHANGHAI) >= arrive_datetime}",
-        # )
-        # return datetime.now(TZ_SHANGHAI) >= arrive_datetime
-        return False
+        logger.debug(f"index: {station_index}, date: {train_date}")
+        station = self.via_stations[station_index]
+        arrive_time_str = (
+            station.arrival_time
+            if station.arrival_time is not None
+            else station.departure_time
+        )
+        arrive_datetime = (
+            datetime.fromisoformat(
+                f"{train_date}T{arrive_time_str}",
+            )
+            + timedelta(days=station.day_index)
+        ).replace(tzinfo=TZ_SHANGHAI)
+        logger.debug(
+            f"arrive: {arrive_time_str}, arrive_datetime: {arrive_datetime}, now: {datetime.now(TZ_SHANGHAI)}, bool: {datetime.now(TZ_SHANGHAI) >= arrive_datetime}",
+        )
+        return datetime.now(TZ_SHANGHAI) >= arrive_datetime
 
 
 class TrainSNData(BaseModel):
