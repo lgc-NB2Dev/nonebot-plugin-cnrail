@@ -180,15 +180,14 @@
       border-top: 1px solid var(--split-line-color);
       margin: 10px 20px;
       padding-top: 10px;
-      display: flex;
-      justify-content: space-between;
+      line-height: 1.7;
     }
 
     .admin,
     .emu_no {
-        font-size: 12px;
-        color: var(--top-sub-color);
-        text-align: left;
+      font-size: 12px;
+      color: var(--top-sub-color);
+      text-align: left;
     }
 
     .card-bottom {
@@ -289,18 +288,18 @@
     <div class="main">
       <div class="card-top">
         <div class="card-title">
-          {{ " / ".join(info.station_train_codes) }}
+          {{ summary.train_number }}
         </div>
         <div class="station">
           <div class="station-top">
             <div class="departure-station">
-              <div class="place">{{ info.summary.from_station }}</div>
+              <div class="place">{{ summary.begin_station_name }}</div>
               <div class="time">
                 <div class="departure-mark">始</div>
-                {{ info.stations[0].start_time }}
+                {{ summary.departure_time }}
               </div>
             </div>
-            <div class="arrow-box">
+            {# <div class="arrow-box">
               {% set total_time = info.total_time -%}
               {%- if info.arrive_next_day -%}
               <div class="duration">历时 {{ total_time[0] }} 时 {{ total_time[1] }} 分</div>
@@ -316,19 +315,28 @@
               </div>
               <div class="duration">历时 {{ total_time[0] }} 时 {{ total_time[1] }} 分</div>
               {%- endif %}
+            </div> #}
+            <div class="arrow-box">
+              <div class="duration">历时 {{ summary.duration_minutes }} 分</div>
+              <div class="arrow-icon">
+                <div class="line"></div>
+                <div class="triangle"></div>
+              </div>
             </div>
             <div class="terminal-station">
-              <div class="place">{{ info.summary.to_station }}</div>
+              <div class="place">{{ summary.end_station_name }}</div>
               <div class="time">
-                {{ info.stations[-1].arrive_time }}
+                {{ summary.arrival_time }}
                 <div class="terminal-mark">终</div>
               </div>
             </div>
           </div>
           <div class="station-bottom">
-            <div class="admin">担当路局：{{ info.maintancer }}</div>
-            {%- if info.emu_no -%}
-            <div class="emu_no">车组号：{{ info.emu_no }}</div>
+            <div class="admin">担当路局：{{ detail.company_name }}</div>
+            {%- if sn -%}
+            <div class="emu_no">车组号：{{ sn }}</div>
+            {%- else -%}
+            <div class="emu_no">列车型号：{{ detail.routing.train_model }}</div>
             {%- endif %}
           </div>
         </div>
@@ -349,22 +357,22 @@
               </tr>
             </thead>
             <tbody>
-              {% for station in info.stations -%}
+              {% for station in detail.via_stations -%}
               <tr>
                 <td>
+                  {#
                   <div class="station-point{% if info.arrived(loop.index0) %} arrived{% endif %}"></div>
+                  等待 model 侧重新实现，摆 #}
                 </td>
                 <td>{{ station.station_name }}</td>
                 <td>
-                  {%- if station.start_time.startswith("-") %}{{ station.arrive_time }}
-                  {%- else %}{{ station.start_time }}{% endif -%}
+                  {% if loop.first %}始发站{% else %}{{ station.arrival_time}}{% endif %}
                 </td>
                 <td>
-                  {%- if station.arrive_time.startswith("-") %}{{ station.start_time }}
-                  {%- else %}{{ station.arrive_time }}{% endif -%}
+                  {% if loop.last %}终点站{% else %}{{ station.departure_time }}{% endif %}
                 </td>
-                <td>{% if loop.first %}始发站{% elif loop.last %}终点站{% else %}{{ station.stay_minutes }} 分{% endif %}</td>
-                <td>{{ station.station_train_code }}</td>
+                <td>{% if loop.first %}始发站{% elif loop.last %}终点站{% else %}{{ station.stop_minutes }} 分{% endif %}</td>
+                <td>{{ station.train_number }}</td>
               </tr>
               {% endfor -%}
             </tbody>

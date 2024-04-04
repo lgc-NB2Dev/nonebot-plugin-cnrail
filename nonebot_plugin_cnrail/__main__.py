@@ -10,7 +10,12 @@ from nonebot import logger
 from nonebot_plugin_alconna import AlconnaMatcher, CommandResult, on_alconna
 from nonebot_plugin_alconna.uniseg import UniMessage
 
-from .data_source import MultipleTrainFoundError, query_train_info, render_train_info
+from .data_source import (
+    MultipleTrainFoundError,
+    generate_word,
+    query_train_info,
+    render_train_info,
+)
 
 
 def parse_date(date_str: str) -> date:
@@ -22,7 +27,9 @@ def parse_date(date_str: str) -> date:
     def parse(df: str) -> Optional[date]:
         with suppress(ValueError):
             parsed = (
-                datetime.strptime(date_str, df).replace(year=today_date.year).date()  # noqa: DTZ007
+                datetime.strptime(date_str, df)
+                .replace(year=today_date.year)
+                .date()  # noqa: DTZ007
             )
             if parsed < today_date:
                 parsed = parsed.replace(year=today_date.year + 1)
@@ -67,7 +74,9 @@ async def _(matcher: AlconnaMatcher, parma: Arparma):
 
     try:
         # use local timezone
-        date_obj = parse_date(train_date) if train_date else date.today()  # noqa: DTZ011
+        date_obj = (
+            parse_date(train_date) if train_date else date.today()
+        )  # noqa: DTZ011
     except ValueError:
         await matcher.finish("日期格式不正确")
 
@@ -75,7 +84,12 @@ async def _(matcher: AlconnaMatcher, parma: Arparma):
         train_info = await query_train_info(train_no, date_obj.isoformat())
     except MultipleTrainFoundError as e:
         much_text = "\n结果过多，仅显示前五个" if len(e.trains) > 5 else ""
-        info_text = "\n".join(x.word for x in e.trains[:5])
+        info_text = "\n".join(
+            [
+                await generate_word(train_code=i, train_date=date_obj.isoformat())
+                for i in e.trains[:5]
+            ],
+        )
         await matcher.finish(
             f"查询到多个车次，请检查您的车次是否正确\n{info_text}{much_text}",
         )
@@ -94,7 +108,10 @@ async def _(matcher: AlconnaMatcher, parma: Arparma):
         )
 
     try:
-        img_bytes = await render_train_info(train_info)
+        img_bytes = await render_train_info(
+            return_data=train_info,
+            train_date=date_obj.isoformat(),
+        )
     except Exception:
         logger.exception("Failed to render train info")
         await matcher.finish("渲染图片时出现错误，请检查后台输出")
