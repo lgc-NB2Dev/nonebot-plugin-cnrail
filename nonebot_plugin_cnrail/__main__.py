@@ -1,6 +1,6 @@
 import string
 from contextlib import suppress
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Optional
 
 from arclet.alconna import Alconna, Args, Arparma, CommandMeta
@@ -31,9 +31,18 @@ def parse_date(date_str: str) -> date:
                 .replace(year=today_date.year)
                 .date()  # noqa: DTZ007
             )
-            if parsed < today_date:
-                parsed = parsed.replace(year=today_date.year + 1)
-            return parsed
+            # if (parsed - today_date).days >= 14:
+            #     parsed = parsed.replace(year=today_date.year - 1)
+            # if (parsed - today_date).days:
+            #     parsed = parsed.replace(year=today_date.year - 1)
+            # return parsed
+            for parsed_date in [
+                parsed,
+                parsed.replace(year=today_date.year - 1),
+                parsed.replace(year=today_date.year + 1)
+            ]:
+                if (today_date - timedelta(days=2)) <= parsed_date <= (today_date + timedelta(days=14)):
+                    return parsed_date
         return None
 
     date_formats = ("%m/%d", "%m-%d", "%m月%d日", "%m月%d号", "%m月%d")
