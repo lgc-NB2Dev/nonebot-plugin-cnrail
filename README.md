@@ -149,7 +149,7 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 
 ### 0.2.2
 
-- 修复列车行驶进度条计算问题（fix by @This-is-XiaoDeng）
+- 修复列车行驶进度条计算问题（fix by [@This-is-XiaoDeng](https://github.com/This-is-XiaoDeng)）
 
 ### 0.2.1
 
