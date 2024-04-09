@@ -114,7 +114,7 @@ plugins = [
 
 ### 效果图
 
-![效果图](https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/cnrail/g3720.png)
+![效果图](https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/cnrail/t301.png)
 
 ## 📞 联系
 
@@ -140,6 +140,10 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 感谢大家的赞助！你们的赞助将是我继续创作的动力！
 
 ## 📝 更新日志
+
+### 0.2.2
+
+- 修复列车行驶进度条计算问题（fix by [@This-is-XiaoDeng](https://github.com/This-is-XiaoDeng)）
 
 ### 0.2.1
 
