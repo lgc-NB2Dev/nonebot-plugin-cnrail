@@ -125,11 +125,11 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 
 ## 💡 鸣谢
 
-### [海兰德小助手](https://qun.qq.com/qunpro/robot/qunshare?robot_uin=3889001607) & [Train-QQbot 插件](https://github.com/staytomorrow/FindTrain)
+### [海兰德小助手](https://qun.qq.com/qunpro/robot/qunshare?robot_uin=3889001607) & [Train-QQBot 插件](https://github.com/staytomorrow/FindTrain)
 
 灵感来源
 
-### [12306](https://www.12306.cn)
+### [MoeFactory 提供的查询 API](https://train.moefactory.com/)
 
 数据来源
 
