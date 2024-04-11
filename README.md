@@ -114,7 +114,11 @@ plugins = [
 
 ### 效果图
 
+<details>
+
 ![效果图](https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/cnrail/t301.png)
+
+</details>
 
 ## 📞 联系
 
