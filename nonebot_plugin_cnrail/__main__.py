@@ -31,17 +31,16 @@ def parse_date(date_str: str) -> date:
                 .replace(year=today_date.year)
                 .date()  # noqa: DTZ007
             )
-            # if (parsed - today_date).days >= 14:
-            #     parsed = parsed.replace(year=today_date.year - 1)
-            # if (parsed - today_date).days:
-            #     parsed = parsed.replace(year=today_date.year - 1)
-            # return parsed
             for parsed_date in [
                 parsed,
                 parsed.replace(year=today_date.year - 1),
-                parsed.replace(year=today_date.year + 1)
+                parsed.replace(year=today_date.year + 1),
             ]:
-                if (today_date - timedelta(days=2)) <= parsed_date <= (today_date + timedelta(days=14)):
+                if (
+                    (today_date - timedelta(days=2))
+                    <= parsed_date
+                    <= (today_date + timedelta(days=14))
+                ):
                     return parsed_date
         return None
 
