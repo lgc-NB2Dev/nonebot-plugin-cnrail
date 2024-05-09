@@ -145,6 +145,10 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 
 ## 📝 更新日志
 
+### 0.2.3
+
+- 更换上游 API 域名
+
 ### 0.2.2
 
 - 修复列车行驶进度条计算问题（fix by [@This-is-XiaoDeng](https://github.com/This-is-XiaoDeng)）
