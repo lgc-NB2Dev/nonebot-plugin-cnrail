@@ -12,7 +12,7 @@ from playwright.async_api import Request, Route
 from .config import config
 from .models import ReturnData, TrainDetailData, TrainSearchResult, TrainSNData
 
-MOERAIL_API_BASE = "https://train.moefactory.com/api/"
+MOERAIL_API_BASE = "https://rail.moefactory.com/api/"
 
 TEMPLATE_PATH = Path(__file__).parent / "templates" / "train_table.html.jinja"
 
