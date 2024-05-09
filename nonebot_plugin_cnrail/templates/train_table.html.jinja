@@ -333,8 +333,8 @@
               <tr>
                 <th></th>
                 <th>停靠站</th>
-                <th>到点</th>
                 <th>开点</th>
+                <th>到点</th>
                 <th>停留</th>
                 <th>车次</th>
               </tr>
@@ -343,15 +343,14 @@
               {% for station in detail.via_stations -%}
               <tr>
                 <td>
-
                   <div class="station-point{% if detail.arrived(loop.index0, train_date) %} arrived{% endif %}"></div>
                 </td>
                 <td>{{ station.station_name }}</td>
                 <td>
-                  {% if loop.first %}-{% else %}{{ station.arrival_time}}{% endif %}
+                  {% if loop.last %}-{% else %}{{ station.departure_time }}{% endif %}
                 </td>
                 <td>
-                  {% if loop.last %}-{% else %}{{ station.departure_time }}{% endif %}
+                  {% if loop.first %}-{% else %}{{ station.arrival_time}}{% endif %}
                 </td>
                 <td>{% if loop.first %}始发站{% elif loop.last %}终点站{% else %}{{ station.stop_minutes }} 分{% endif %}</td>
                 <td>{{ station.train_number }}</td>
