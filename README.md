@@ -7,7 +7,7 @@
 </a>
 
 <p>
-  <img src="https://raw.githubusercontent.com/A-kirami/nonebot-plugin-template/resources/NoneBotPlugin.svg" width="240" alt="NoneBotPluginText">
+  <img src="https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/template/plugin.svg" alt="NoneBotPluginText">
 </p>
 
 # NoneBot-Plugin-CNRail
@@ -35,6 +35,15 @@ _✨ 12306 列车时刻表查询插件 ✨_
 </a>
 <a href="https://pypi.python.org/pypi/nonebot-plugin-cnrail">
   <img src="https://img.shields.io/pypi/dm/nonebot-plugin-cnrail" alt="pypi download">
+</a>
+
+<br />
+
+<a href="https://registry.nonebot.dev/plugin/nonebot-plugin-cnrail:nonebot_plugin_cnrail">
+  <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnbbdg.lgc2333.top%2Fplugin%2Fnonebot-plugin-cnrail" alt="NoneBot Registry">
+</a>
+<a href="https://registry.nonebot.dev/plugin/nonebot-plugin-cnrail:nonebot_plugin_cnrail">
+  <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnbbdg.lgc2333.top%2Fplugin-adapters%2Fnonebot-plugin-cnrail" alt="Supported Adapters">
 </a>
 
 </div>
