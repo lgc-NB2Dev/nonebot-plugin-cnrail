@@ -4,7 +4,8 @@
   "private": true,
   "module": "dist/index.mjs",
   "scripts": {
-    "build": "tsc -b && dumble && node ./scripts/copy-to-assets.cjs"
+    "build-dev": "tsc -b && dumble && node ./scripts/copy-to-assets.cjs",
+    "build": "tsc -b && dumble --minify && node ./scripts/copy-to-assets.cjs"
   },
   "version": "0.0.0",
   "devDependencies": {
