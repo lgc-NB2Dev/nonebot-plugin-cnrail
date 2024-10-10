@@ -45,8 +45,12 @@ async function changeThemeColor() {
 }
 
 ;(async () => {
-  adjustLineHeight()
-  await changeThemeColor()
+  try {
+    adjustLineHeight()
+    await changeThemeColor()
+  } catch (e) {
+    console.error(e)
+  }
 
   // notify playwright that the page is done
   const doneDivElem = document.createElement('div')
