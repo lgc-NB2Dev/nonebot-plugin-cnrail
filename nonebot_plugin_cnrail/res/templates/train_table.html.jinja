@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/res/assets/index.css">
+</head>
+
+<body>
+  <div class="bg-wrapper">
+    <div class="main">
+      <div class="card-top">
+        <div class="card-title">
+          {{ summary.train_number }}
+        </div>
+        <div class="station">
+          <div class="station-top">
+            <div class="departure-station">
+              <div class="place">{{ summary.begin_station_name }}</div>
+              <div class="time">
+                <div class="departure-mark">始</div>
+                {{ summary.departure_time }}
+              </div>
+            </div>
+            <div class="arrow-box">
+              <div class="duration">历时 {{ summary.pass_time }}</div>
+              <div class="arrow-icon">
+                <div class="line"></div>
+                <div class="triangle"></div>
+              </div>
+            </div>
+            <div class="terminal-station">
+              <div class="place">{{ summary.end_station_name }}</div>
+              <div class="time">
+                {{ summary.arrival_time }}
+                <div class="terminal-mark">终</div>
+              </div>
+            </div>
+          </div>
+          <div class="station-bottom">
+            <div>担当路局：{{ detail.company_name }}</div>
+            {% if sn -%}<div>车组号：{{ sn }}</div>
+            {%- else -%}<div>列车型号：{{ detail.routing.train_model }}</div>{%- endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="card-bottom">
+        <div class="bottom-title">经停站</div>
+        <div class="station-table-wrapper">
+          <table class="station-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>停靠站</th>
+                <th>开点</th>
+                <th>到点</th>
+                <th>停留</th>
+                <th>车次</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for station in detail.via_stations -%}
+              <tr>
+                <td>
+                  <div class="station-point{% if detail.arrived(loop.index0, train_date) %} arrived{% endif %}"></div>
+                </td>
+                <td>{{ station.station_name }}</td>
+                <td>
+                  {% if loop.last %}-{% else %}{{ station.departure_time }}{% endif %}
+                </td>
+                <td>
+                  {% if loop.first %}-{% else %}{{ station.arrival_time}}{% endif %}
+                </td>
+                <td>{% if loop.first %}始发站{% elif loop.last %}终点站{% else %}{{ station.stop_minutes }} 分{% endif %}</td>
+                <td>{{ station.train_number }}</td>
+              </tr>
+              {% endfor -%}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script type="module" src="/res/assets/index.mjs"></script>
+
+</html>

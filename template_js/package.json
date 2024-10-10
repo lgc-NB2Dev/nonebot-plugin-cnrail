@@ -1,0 +1,20 @@
+{
+  "license": "MIT",
+  "name": "template-js",
+  "private": true,
+  "module": "dist/index.mjs",
+  "scripts": {
+    "build": "tsc -b && dumble && node ./scripts/copy-to-assets.cjs"
+  },
+  "version": "0.0.0",
+  "devDependencies": {
+    "@monet-color/palette": "^0.0.1-alpha.4",
+    "@monet-color/theme": "0.0.1-alpha.4",
+    "@monet-color/tools": "^0.0.1-alpha.4",
+    "@types/node": "^22.7.5",
+    "dumble": "^0.2.1",
+    "typescript": "^5.6.3",
+    "@monet-color/quantize": "^0.0.1-alpha.1"
+  },
+  "dependencies": {}
+}

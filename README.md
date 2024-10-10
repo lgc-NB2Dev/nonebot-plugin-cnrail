@@ -154,6 +154,11 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 
 ## 📝 更新日志
 
+### 0.3.0
+
+- 图片换用 Material Design 风格的莫奈（Monet）取色方案
+- 修复 API 请求
+
 ### 0.2.3
 
 - 更换上游 API 域名

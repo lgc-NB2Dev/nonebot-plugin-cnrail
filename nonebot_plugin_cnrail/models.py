@@ -1,96 +1,100 @@
 from datetime import datetime, timedelta
 from typing import List, Optional, Union
-from nonebot.log import logger
-import pytz
-from pydantic import BaseModel, Field
 
-TZ_SHANGHAI = pytz.timezone("Asia/Shanghai")
+from cookit.pyd import CamelAliasModel
+
+from .utils import TZ_SHANGHAI
 
 
-class TrainSearchData(BaseModel):
-    train_index: int = Field(alias="trainIndex")
-    train_number: str = Field(alias="trainNumber")
-    begin_station_name: str = Field(alias="beginStationName")
-    departure_time: str = Field(alias="departureTime")
-    end_station_name: str = Field(alias="endStationName")
-    arrival_time: str = Field(alias="arrivalTime")
-    day_count: int = Field(alias="dayCount")
-    duration_minutes: int = Field(alias="durationMinutes")
-    distance: int = Field(alias="distance")
-    train_type: str = Field(alias="trainType")
-    cr_type: int = Field(alias="crType")
-    out_of_date_flag: int = Field(alias="outOfDateFlag")
+class TrainSearchData(CamelAliasModel):
+    train_index: int
+    train_number: str
+    begin_station_name: str
+    departure_time: str
+    end_station_name: str
+    arrival_time: str
+    day_count: int
+    duration_minutes: int
+    distance: int
+    train_type: str
+    cr_type: int
+    out_of_date_flag: int
 
     @property
     def pass_time(self) -> str:
-        start_datetime = datetime.strptime(self.departure_time, "%H:%M")
-        end_datetime = datetime.strptime(self.arrival_time, "%H:%M")
+        start_datetime = datetime.strptime(self.departure_time, "%H:%M").replace(
+            tzinfo=TZ_SHANGHAI,
+        )
+        end_datetime = datetime.strptime(self.arrival_time, "%H:%M").replace(
+            tzinfo=TZ_SHANGHAI,
+        )
         if end_datetime < start_datetime:
             end_datetime += timedelta(days=1)
         time_difference = end_datetime - start_datetime
-        return f"{(str(self.day_count - 1 + time_difference.days) + ' 天') if (self.day_count - 1 + time_difference.days) > 0 else ''} {time_difference.seconds // 3600} 时 {time_difference.seconds % 3600 // 60} 分"
+        return (
+            f"{(str(self.day_count - 1 + time_difference.days) + ' 天') if (self.day_count - 1 + time_difference.days) > 0 else ''}"
+            f" {time_difference.seconds // 3600} 时 {time_difference.seconds % 3600 // 60} 分"
+        )
 
 
-class TrainSearchResult(BaseModel):
-    page_index: int = Field(alias="pageIndex")
-    page_size: int = Field(alias="pageSize")
-    total_pages: int = Field(alias="totalPages")
-    total_count: int = Field(alias="totalCount")
+class TrainSearchResult(CamelAliasModel):
+    page_index: int
+    page_size: int
+    total_pages: int
+    total_count: int
     data: List[TrainSearchData]
 
 
-class TrainDetailviaSation(BaseModel):
-    station_name: str = Field(alias="stationName")
-    station_telegram_code: Optional[str] = Field(alias="stationTelegramCode")
-    train_number: str = Field(alias="trainNumber")
-    arrival_time: Optional[str] = Field(alias="arrivalTime")
-    departure_time: Optional[str] = Field(alias="departureTime")
-    stop_minutes: int = Field(alias="stopMinutes")
+class TrainDetailViaStation(CamelAliasModel):
+    station_name: str
+    station_telegram_code: Optional[str]
+    train_number: str
+    arrival_time: Optional[str]
+    departure_time: Optional[str]
+    stop_minutes: int
     distance: int
-    checkout_name: Optional[str] = Field(alias="checkoutName")
+    checkout_name: Optional[str]
     speed: Optional[int]
-    day_index: int = Field(alias="dayIndex")
-    company_name: str = Field(alias="companyName")
+    day_index: int
+    company_name: str
     province: str
     district: str
-    out_of_date_flag: int = Field(alias="outOfDateFlag")
-    is_turn: bool = Field(alias="isTurn")
+    out_of_date_flag: int
+    is_turn: bool
 
 
-class TrainDetailRoutingItem(BaseModel):
-    train_number: str = Field(alias="trainNumber")
-    begin_station_name: str = Field(alias="beginStationName")
-    departure_time: str = Field(alias="departureTime")
-    end_station_name: str = Field(alias="endStationName")
-    arrival_time: str = Field(alias="arrivalTime")
+class TrainDetailRoutingItem(CamelAliasModel):
+    train_number: str
+    begin_station_name: str
+    departure_time: str
+    end_station_name: str
+    arrival_time: str
 
 
-class TrainDetailRoutingMissingItem(BaseModel):
-    train_number: str = Field(alias="trainNumber")
-    begin_station_name: Optional[str] = Field(alias="beginStationName")
-    departure_time: Optional[str] = Field(alias="departureTime")
-    end_station_name: Optional[str] = Field(alias="endStationName")
-    arrival_time: Optional[str] = Field(alias="arrivalTime")
+class TrainDetailRoutingMissingItem(CamelAliasModel):
+    train_number: str
+    begin_station_name: Optional[str]
+    departure_time: Optional[str]
+    end_station_name: Optional[str]
+    arrival_time: Optional[str]
 
 
-class TrainDetailRouing(BaseModel):
-    routing_items: List[
-        Union[TrainDetailRoutingItem, TrainDetailRoutingMissingItem]
-    ] = Field(alias="routingItems")
-    train_model: str = Field(alias="trainModel")
+class TrainDetailRouting(CamelAliasModel):
+    routing_items: List[Union[TrainDetailRoutingItem, TrainDetailRoutingMissingItem]]
+    train_model: str
 
 
-class TrainDetailData(BaseModel):
-    train_number: str = Field(alias="trainNumber")
-    train_type: str = Field(alias="trainType")
-    company_name: str = Field(alias="companyName")
-    food_coach_name: Optional[str] = Field(alias="foodCoachName")
-    via_stations: List[TrainDetailviaSation] = Field(alias="viaStations")
-    cr_type: int = Field(alias="crType")
-    routing: TrainDetailRouing
+class TrainDetailData(CamelAliasModel):
+    train_number: str
+    train_type: str
+    company_name: str
+    food_coach_name: Optional[str]
+    via_stations: List[TrainDetailViaStation]
+    cr_type: int
+    routing: TrainDetailRouting
 
     def arrived(self, station_index: int, train_date: str) -> bool:  # 有待修改
-        logger.debug(f"index: {station_index}, date: {train_date}")
+        # logger.debug(f"index: {station_index}, date: {train_date}")
         station = self.via_stations[station_index]
         arrive_time_str = (
             station.arrival_time
@@ -103,20 +107,13 @@ class TrainDetailData(BaseModel):
             )
             + timedelta(days=station.day_index)
         ).replace(tzinfo=TZ_SHANGHAI)
-        logger.debug(
-            f"arrive: {arrive_time_str}, arrive_datetime: {arrive_datetime}, now: {datetime.now(TZ_SHANGHAI)}, bool: {datetime.now(TZ_SHANGHAI) >= arrive_datetime}",
-        )
+        # logger.debug(
+        #     f"arrive: {arrive_time_str}, arrive_datetime: {arrive_datetime}, now: {datetime.now(TZ_SHANGHAI)}, bool: {datetime.now(TZ_SHANGHAI) >= arrive_datetime}",
+        # )
         return datetime.now(TZ_SHANGHAI) >= arrive_datetime
 
 
-class TrainSNData(BaseModel):
-    train_sn: str = Field(alias="trainSN")
+class TrainSNData(CamelAliasModel):
+    emu_serial_number: str
     date: str
-    train_number: str = Field(alias="trainNumber")
-
-
-class ReturnData(BaseModel):
-    search: TrainSearchData
-    datail: TrainDetailData
-    sn: Optional[List[TrainSNData]]
-    train_date: str
+    train_number: str

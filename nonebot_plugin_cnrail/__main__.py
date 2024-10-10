@@ -14,22 +14,23 @@ from .data_source import (
     MultipleTrainFoundError,
     generate_word,
     query_train_info,
-    render_train_info,
 )
+from .render import render_train_info
+from .utils import TZ_SHANGHAI
 
 
 def parse_date(date_str: str) -> date:
     # use local timezone
     for x in string.whitespace:
         date_str = date_str.replace(x, "")
-    today_date = date.today()  # noqa: DTZ011
+    today_date = datetime.now(tz=TZ_SHANGHAI).date()
 
     def parse(df: str) -> Optional[date]:
         with suppress(ValueError):
             parsed = (
                 datetime.strptime(date_str, df)
-                .replace(year=today_date.year)
-                .date()  # noqa: DTZ007
+                .replace(year=today_date.year, tzinfo=TZ_SHANGHAI)
+                .date()
             )
             for parsed_date in [
                 parsed,
@@ -83,8 +84,10 @@ async def _(matcher: AlconnaMatcher, parma: Arparma):
     try:
         # use local timezone
         date_obj = (
-            parse_date(train_date) if train_date else date.today()
-        )  # noqa: DTZ011
+            parse_date(train_date)
+            if train_date
+            else datetime.now(tz=TZ_SHANGHAI).date()
+        )
     except ValueError:
         await matcher.finish("日期格式不正确")
 
@@ -117,7 +120,7 @@ async def _(matcher: AlconnaMatcher, parma: Arparma):
 
     try:
         img_bytes = await render_train_info(
-            return_data=train_info,
+            data=train_info,
             train_date=date_obj.isoformat(),
         )
     except Exception:
