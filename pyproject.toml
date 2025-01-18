@@ -3,7 +3,7 @@ name = "nonebot-plugin-cnrail"
 dynamic = ["version"]
 description = "NoneBot2 plugin for query the train time table"
 authors = [
-    { name = "student_2333", email = "lgc2333@126.com" },
+    { name = "LgCookie", email = "lgc2333@126.com" },
     { name = "XieXiLin", email = "support@xiexilin.com" },
 ]
 dependencies = [
