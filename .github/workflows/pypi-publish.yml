@@ -23,5 +23,12 @@ jobs:
       - name: Setup PDM
         uses: pdm-project/setup-pdm@v3
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Build JS
+        run: pnpm install && pnpm build
+
       - name: Build and Publish distribution 📦 to PyPI
         run: pdm publish
