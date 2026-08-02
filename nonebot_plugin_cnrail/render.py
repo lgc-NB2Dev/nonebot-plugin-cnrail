@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import httpx
 import jinja2 as jj
@@ -6,12 +7,14 @@ from cookit.pw import RouterGroup, make_real_path_router
 from cookit.pw.loguru import log_router_err
 from nonebot import logger
 from nonebot_plugin_htmlrender import get_new_page
-from playwright.async_api import Route
-from yarl import URL
 
 from .config import config
 from .data_source import TrainInfo
 from .debug import write_debug_file
+
+if TYPE_CHECKING:
+    from playwright.async_api import Route
+    from yarl import URL
 
 RES_PATH = Path(__file__).parent / "res"
 TEMPLATES_PATH = RES_PATH / "templates"
@@ -29,7 +32,7 @@ base_router_group = RouterGroup()
 
 @base_router_group.router(f"{ROUTE_BASE_URL}/bg")
 @log_router_err()
-async def _(route: Route, **_):
+async def _(route: "Route", **_):
     try:
         async with httpx.AsyncClient(follow_redirects=True) as client:
             resp = await client.get(config.CNRAIL_ACG_IMAGE_URL, follow_redirects=True)
@@ -48,7 +51,7 @@ async def _(route: Route, **_):
 @base_router_group.router(f"{ROUTE_BASE_URL}/res/**/*")
 @log_router_err()
 @make_real_path_router
-async def _(url: URL, **_):
+async def _(url: "URL", **_):
     return RES_PATH.joinpath(*url.parts[2:])
 
 
@@ -70,7 +73,7 @@ async def render_train_info(data: TrainInfo, train_date: str) -> bytes:
 
     @router_group.router(f"{ROUTE_BASE_URL}/")
     @log_router_err()
-    async def _(route: Route, **_):
+    async def _(route: "Route", **_):
         await route.fulfill(status=200, content_type="text/html", body=html)
 
     async with get_new_page() as page:

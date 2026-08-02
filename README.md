@@ -40,10 +40,10 @@ _✨ 12306 列车时刻表查询插件 ✨_
 <br />
 
 <a href="https://registry.nonebot.dev/plugin/nonebot-plugin-cnrail:nonebot_plugin_cnrail">
-  <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnbbdg.lgc2333.top%2Fplugin%2Fnonebot-plugin-cnrail" alt="NoneBot Registry">
+  <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnbbdg.lgck.cc%2Fplugin%2Fnonebot-plugin-cnrail" alt="NoneBot Registry">
 </a>
 <a href="https://registry.nonebot.dev/plugin/nonebot-plugin-cnrail:nonebot_plugin_cnrail">
-  <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnbbdg.lgc2333.top%2Fplugin-adapters%2Fnonebot-plugin-cnrail" alt="Supported Adapters">
+  <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnbbdg.lgck.cc%2Fplugin-adapters%2Fnonebot-plugin-cnrail" alt="Supported Adapters">
 </a>
 
 </div>
@@ -148,7 +148,7 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 
 ## 💰 赞助
 
-**[赞助我](https://blog.lgc2333.top/donate)**
+**[赞助我](https://lgck.cc/donate)**
 
 感谢大家的赞助！你们的赞助将是我继续创作的动力！
 

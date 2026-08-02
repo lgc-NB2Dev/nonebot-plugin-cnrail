@@ -1,12 +1,14 @@
 from datetime import datetime, timedelta
-from typing import List, Optional, Union
 
-from cookit.pyd import CamelAliasModel
+from cookit import camel_case
+from cookit.pyd import model_with_alias_generator
+from pydantic import BaseModel
 
 from .utils import TZ_SHANGHAI
 
 
-class TrainSearchData(CamelAliasModel):
+@model_with_alias_generator(camel_case)
+class TrainSearchData(BaseModel):
     train_index: int
     train_number: str
     begin_station_name: str
@@ -37,24 +39,26 @@ class TrainSearchData(CamelAliasModel):
         )
 
 
-class TrainSearchResult(CamelAliasModel):
+@model_with_alias_generator(camel_case)
+class TrainSearchResult(BaseModel):
     cursor: int
     count: int
     has_more: bool
     total_count: int
-    data: List[TrainSearchData]
+    data: list[TrainSearchData]
 
 
-class TrainDetailViaStation(CamelAliasModel):
+@model_with_alias_generator(camel_case)
+class TrainDetailViaStation(BaseModel):
     station_name: str
-    station_telegram_code: Optional[str]
+    station_telegram_code: str | None
     train_number: str
-    arrival_time: Optional[str]
-    departure_time: Optional[str]
+    arrival_time: str | None
+    departure_time: str | None
     stop_minutes: int
     distance: int
-    checkout_name: Optional[str]
-    speed: Optional[int]
+    checkout_name: str | None
+    speed: int | None
     day_index: int
     company_name: str
     province: str
@@ -63,7 +67,8 @@ class TrainDetailViaStation(CamelAliasModel):
     is_turn: bool
 
 
-class TrainDetailRoutingItem(CamelAliasModel):
+@model_with_alias_generator(camel_case)
+class TrainDetailRoutingItem(BaseModel):
     train_number: str
     begin_station_name: str
     departure_time: str
@@ -71,25 +76,28 @@ class TrainDetailRoutingItem(CamelAliasModel):
     arrival_time: str
 
 
-class TrainDetailRoutingMissingItem(CamelAliasModel):
+@model_with_alias_generator(camel_case)
+class TrainDetailRoutingMissingItem(BaseModel):
     train_number: str
-    begin_station_name: Optional[str]
-    departure_time: Optional[str]
-    end_station_name: Optional[str]
-    arrival_time: Optional[str]
+    begin_station_name: str | None
+    departure_time: str | None
+    end_station_name: str | None
+    arrival_time: str | None
 
 
-class TrainDetailRouting(CamelAliasModel):
-    routing_items: List[Union[TrainDetailRoutingItem, TrainDetailRoutingMissingItem]]
+@model_with_alias_generator(camel_case)
+class TrainDetailRouting(BaseModel):
+    routing_items: list[TrainDetailRoutingItem | TrainDetailRoutingMissingItem]
     train_model: str
 
 
-class TrainDetailData(CamelAliasModel):
+@model_with_alias_generator(camel_case)
+class TrainDetailData(BaseModel):
     train_number: str
     train_type: str
     company_name: str
-    food_coach_name: Optional[str]
-    via_stations: List[TrainDetailViaStation]
+    food_coach_name: str | None
+    via_stations: list[TrainDetailViaStation]
     cr_type: int
     routing: TrainDetailRouting
 
@@ -113,7 +121,8 @@ class TrainDetailData(CamelAliasModel):
         return datetime.now(TZ_SHANGHAI) >= arrive_datetime
 
 
-class TrainSNData(CamelAliasModel):
+@model_with_alias_generator(camel_case)
+class TrainSNData(BaseModel):
     emu_serial_number: str
     date: str
     train_number: str

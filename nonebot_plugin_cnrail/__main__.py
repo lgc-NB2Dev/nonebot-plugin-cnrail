@@ -1,7 +1,6 @@
 import string
 from contextlib import suppress
 from datetime import date, datetime, timedelta
-from typing import Optional
 
 from arclet.alconna import Alconna, Args, Arparma, CommandMeta
 from arclet.alconna.exceptions import SpecialOptionTriggered
@@ -25,7 +24,7 @@ def parse_date(date_str: str) -> date:
         date_str = date_str.replace(x, "")
     today_date = datetime.now(tz=TZ_SHANGHAI).date()
 
-    def parse(df: str) -> Optional[date]:
+    def parse(df: str) -> date | None:
         with suppress(ValueError):
             parsed = (
                 datetime.strptime(date_str, df)
@@ -79,7 +78,7 @@ async def _(matcher: AlconnaMatcher, res: CommandResult):
 @search_train_info.handle()
 async def _(matcher: AlconnaMatcher, parma: Arparma):
     train_no: str = parma["train"]
-    train_date: Optional[str] = parma["date"]
+    train_date: str | None = parma["date"]
 
     try:
         # use local timezone

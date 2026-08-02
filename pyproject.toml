@@ -3,17 +3,18 @@ name = "nonebot-plugin-cnrail"
 dynamic = ["version"]
 description = "NoneBot2 plugin for query the train time table"
 authors = [
-    { name = "LgCookie", email = "lgc2333@126.com" },
+    { name = "LgCuwukii", email = "lgc2333@126.com" },
     { name = "XieXiLin", email = "support@xiexilin.com" },
+    { name = "MovFish" },
 ]
 dependencies = [
-    "nonebot2>=2.4.3",
+    "nonebot2>=2.5.0",
     "httpx>=0.28.1",
-    "nonebot-plugin-alconna>=0.59.4",
-    "nonebot-plugin-htmlrender>=0.6.6",
+    "nonebot-plugin-alconna>=0.62.1",
+    "nonebot-plugin-htmlrender>=0.6.0,<0.8.0",
     "jinja2>=3.1.6",
-    "pytz>=2025.2",
-    "cookit[jinja,loguru,playwright,pyd]>=0.13.0",
+    "pytz>=2026.3.post1",
+    "cookit[jinja,loguru,playwright,pyd]>=0.13.3",
 ]
 requires-python = ">=3.10,<4.0"
 readme = "README.md"

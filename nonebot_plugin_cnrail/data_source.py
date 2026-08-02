@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List, Optional
 
 import httpx
 from nonebot import logger
@@ -15,12 +14,12 @@ REQUEST_TIMEOUT = 15
 class TrainInfo:
     search: TrainSearchData
     detail: TrainDetailData
-    sn: Optional[List[TrainSNData]]
+    sn: list[TrainSNData] | None
     train_date: str
 
 
 class MultipleTrainFoundError(Exception):
-    def __init__(self, trains: List[str]) -> None:
+    def __init__(self, trains: list[str]) -> None:
         self.trains = trains
         super().__init__(trains)
 
@@ -43,7 +42,7 @@ async def generate_word(train_code: str, train_date: str) -> str:
     return f"{result.data[0].train_number} | {result.data[0].begin_station_name} - {result.data[0].end_station_name} | 耗时 {result.data[0].duration_minutes} 分钟"
 
 
-async def get_train_sn(train_code: str) -> Optional[List[TrainSNData]]:
+async def get_train_sn(train_code: str) -> list[TrainSNData] | None:
     try:
         async with httpx.AsyncClient(
             base_url=MOERAIL_API_BASE,
@@ -56,13 +55,19 @@ async def get_train_sn(train_code: str) -> Optional[List[TrainSNData]]:
             )
             resp.raise_for_status()
         payload = resp.json()
+
         if payload.get("code") != 200:
-            raise ValueError(payload.get("message") or "unknown API error")
+            logger.warning(
+                f"API Error during train serial number query: {payload.get('message') or 'unknown error'}"
+            )
+            return None
+
         return (
-            type_validate_python(List[TrainSNData], payload["data"])
+            type_validate_python(list[TrainSNData], payload["data"])
             if payload.get("data")
             else None
         )
+
     except Exception:
         logger.warning("Failed to query train serial number", exc_info=True)
         return None
@@ -71,7 +76,7 @@ async def get_train_sn(train_code: str) -> Optional[List[TrainSNData]]:
 async def query_train_info(
     train_code: str,
     train_date: str,
-) -> Optional[TrainInfo]:
+) -> TrainInfo | None:
     async with httpx.AsyncClient(
         base_url=MOERAIL_API_BASE,
         follow_redirects=True,

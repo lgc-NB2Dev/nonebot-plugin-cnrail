@@ -1,4 +1,4 @@
-from typing_extensions import Annotated
+from typing import Annotated
 
 from nonebot import get_plugin_config
 from pydantic import BaseModel, Field, HttpUrl
