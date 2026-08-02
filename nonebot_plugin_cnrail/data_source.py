@@ -2,11 +2,13 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 import httpx
+from nonebot import logger
 from nonebot.compat import type_validate_python
 
 from .models import TrainDetailData, TrainSearchData, TrainSearchResult, TrainSNData
 
 MOERAIL_API_BASE = "https://rail.moefactory.com/api/"
+REQUEST_TIMEOUT = 15
 
 
 @dataclass
@@ -27,6 +29,7 @@ async def generate_word(train_code: str, train_date: str) -> str:
     async with httpx.AsyncClient(
         base_url=MOERAIL_API_BASE,
         follow_redirects=True,
+        timeout=REQUEST_TIMEOUT,
     ) as client:
         resp = await client.post(
             url="/trainNumber/query",
@@ -41,20 +44,28 @@ async def generate_word(train_code: str, train_date: str) -> str:
 
 
 async def get_train_sn(train_code: str) -> Optional[List[TrainSNData]]:
-    async with httpx.AsyncClient(
-        base_url=MOERAIL_API_BASE,
-        follow_redirects=True,
-    ) as client:
-        resp = await client.post(
-            url="/emuSerialNumber/query",
-            data={"keyword": train_code},
+    try:
+        async with httpx.AsyncClient(
+            base_url=MOERAIL_API_BASE,
+            follow_redirects=True,
+            timeout=REQUEST_TIMEOUT,
+        ) as client:
+            resp = await client.post(
+                url="/emuSerialNumber/query",
+                data={"keyword": train_code},
+            )
+            resp.raise_for_status()
+        payload = resp.json()
+        if payload.get("code") != 200:
+            raise ValueError(payload.get("message") or "unknown API error")
+        return (
+            type_validate_python(List[TrainSNData], payload["data"])
+            if payload.get("data")
+            else None
         )
-        resp.raise_for_status()
-    return (
-        type_validate_python(List[TrainSNData], resp.json()["data"])
-        if resp.json()["data"]
-        else None
-    )
+    except Exception:
+        logger.warning("Failed to query train serial number", exc_info=True)
+        return None
 
 
 async def query_train_info(
@@ -64,6 +75,7 @@ async def query_train_info(
     async with httpx.AsyncClient(
         base_url=MOERAIL_API_BASE,
         follow_redirects=True,
+        timeout=REQUEST_TIMEOUT,
     ) as client:
         resp = await client.post(
             url="/trainNumber/query",
@@ -83,6 +95,7 @@ async def query_train_info(
         async with httpx.AsyncClient(
             base_url=MOERAIL_API_BASE,
             follow_redirects=True,
+            timeout=REQUEST_TIMEOUT,
         ) as client:
             resp = await client.post(
                 url="/search/getTrainCandidates",
@@ -99,6 +112,7 @@ async def query_train_info(
     async with httpx.AsyncClient(
         base_url=MOERAIL_API_BASE,
         follow_redirects=True,
+        timeout=REQUEST_TIMEOUT,
     ) as client:
         resp = await client.post(
             url="/trainDetails/query",

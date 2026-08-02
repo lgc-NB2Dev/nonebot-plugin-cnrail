@@ -38,9 +38,9 @@ class TrainSearchData(CamelAliasModel):
 
 
 class TrainSearchResult(CamelAliasModel):
-    page_index: int
-    page_size: int
-    total_pages: int
+    cursor: int
+    count: int
+    has_more: bool
     total_count: int
     data: List[TrainSearchData]
 
