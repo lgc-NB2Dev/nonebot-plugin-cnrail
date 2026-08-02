@@ -28,6 +28,7 @@ jobs:
           version: 10
 
       - name: Build JS
+        working-directory: template_js
         run: pnpm install && pnpm build
 
       - name: Build and Publish distribution 📦 to PyPI
