@@ -6,7 +6,9 @@ import jinja2 as jj
 from cookit.pw import RouterGroup, make_real_path_router
 from cookit.pw.loguru import log_router_err
 from nonebot import logger
-from nonebot_plugin_htmlrender import get_new_page
+from nonebot_plugin_htmlrender import get_default_application
+from playwright.async_api import Route
+from yarl import URL
 
 from .config import config
 from .data_source import TrainInfo
@@ -76,11 +78,10 @@ async def render_train_info(data: TrainInfo, train_date: str) -> bytes:
     async def _(route: "Route", **_):
         await route.fulfill(status=200, content_type="text/html", body=html)
 
-    async with get_new_page() as page:
+    playwright = get_default_application().extensions.playwright
+    async with playwright.page() as page:
         await router_group.apply(page)
         await page.goto(f"{ROUTE_BASE_URL}/")
         await page.wait_for_selector("#done", state="attached")
 
-        elem = await page.query_selector(".bg-wrapper")
-        assert elem
-        return await elem.screenshot(type="jpeg")
+        return await page.locator(".bg-wrapper").screenshot(type="jpeg")
