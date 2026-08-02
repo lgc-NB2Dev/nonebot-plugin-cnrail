@@ -3,7 +3,7 @@
 <div align="center">
 
 <a href="https://github.com/lgc-NB2Dev/nonebot-plugin-cnrail">
-  <img src="https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/cnrail/logo.png" width="180" height="180" alt="NoneBotPluginLogo">
+  <img src="https://raw.githubusercontent.com/lgc-NB2Dev/readme/main/cnrail/logo.svg" width="180" height="180" alt="NoneBotPluginLogo">
 </a>
 
 <p>
