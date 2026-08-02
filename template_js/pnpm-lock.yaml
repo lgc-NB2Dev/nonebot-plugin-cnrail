@@ -7,14 +7,13 @@ settings:
 importers:
 
   .:
-    dependencies:
-      '@monet-color/quantize':
-        specifier: 0.0.1-alpha.1
-        version: 0.0.1-alpha.1
     devDependencies:
       '@monet-color/palette':
         specifier: ^0.0.1-alpha.4
         version: 0.0.1-alpha.4(@monet-color/quantize@0.0.1-alpha.1)(@monet-color/tools@0.0.1-alpha.4)
+      '@monet-color/quantize':
+        specifier: ^0.0.1-alpha.1
+        version: 0.0.1-alpha.1
       '@monet-color/theme':
         specifier: 0.0.1-alpha.4
         version: 0.0.1-alpha.4(@monet-color/tools@0.0.1-alpha.4)
