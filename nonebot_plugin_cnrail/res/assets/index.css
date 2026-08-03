@@ -1,28 +1,24 @@
+:root {
+  --md-sys-color-primary: #0c70ef;
+  --md-sys-color-on-primary: #fff;
+  --md-sys-color-primary-container: #e5eef8;
+  --md-sys-color-on-primary-container: #002d7a;
+  --md-sys-color-secondary: #53b13d;
+  --md-sys-color-on-secondary: #fff;
+  --md-sys-color-tertiary: #fa8a12;
+  --md-sys-color-on-tertiary: #fff;
+  --md-sys-color-surface: #fff;
+  --md-sys-color-surface-container-lowest: #fff;
+  --md-sys-color-surface-container-low: #f5f5f5;
+  --md-sys-color-on-surface: #000;
+  --md-sys-color-on-surface-variant: #888;
+  --md-sys-color-outline: #aaa;
+  --md-sys-color-outline-variant: #bbb;
+  --md-sys-color-shadow: #000;
+  --cnrail-color-date: #333;
+}
+
 * {
-  --top-bg-color: #0c70efaa;
-  --top-inner-bg-color: #fffa;
-  --top-title-color: #fff;
-  --top-sub-color: #888;
-
-  --arrow-time-color: #333;
-  --split-line-color: #bbb;
-  --departure-station-color: #fa8a12;
-  --terminal-station-color: #53b13d;
-
-  --bottom-bg-color: #fffa;
-  --bottom-inner-bg-color: #fffa;
-  --bottom-main-color: #000;
-  --bottom-sub-color: #888;
-
-  --station-table-head-bg-color: #e5eef8aa;
-  --station-table-odd-bg-color: #fffc;
-  --station-table-even-bg-color: #f5f5f5aa;
-  --station-table-head-color: #002d7a;
-  --station-table-line-color: #aaa;
-  --station-table-arrived-line-color: #1b82ed;
-
-  --box-shadow: 3px 3px 8px #0003;
-
   font-family: sans-serif;
 }
 
@@ -48,11 +44,11 @@
   padding: 20px;
   backdrop-filter: blur(3px);
   border-radius: 10px;
-  box-shadow: var(--box-shadow);
+  box-shadow: 3px 3px 8px color-mix(in srgb, var(--md-sys-color-shadow) 20%, transparent);
 }
 
 .card-top {
-  background-color: var(--top-bg-color);
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) 67%, transparent);
   margin-bottom: 20px;
 }
 
@@ -60,7 +56,7 @@
   font-size: 24px;
   font-weight: bold;
   text-align: center;
-  color: var(--top-title-color);
+  color: var(--md-sys-color-on-primary);
   margin-bottom: 10px;
 }
 
@@ -70,8 +66,8 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: var(--top-inner-bg-color);
-  box-shadow: var(--box-shadow);
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 67%, transparent);
+  box-shadow: 3px 3px 8px color-mix(in srgb, var(--md-sys-color-shadow) 20%, transparent);
 }
 
 .station-top {
@@ -101,19 +97,20 @@
   height: 14px;
   width: 14px;
   border-radius: 4px;
-  color: var(--top-inner-bg-color);
   font-size: 10px;
   text-align: center;
 }
 
 .departure-mark {
   margin-right: 2px;
-  background-color: var(--departure-station-color);
+  background-color: var(--md-sys-color-tertiary);
+  color: var(--md-sys-color-on-tertiary);
 }
 
 .terminal-mark {
   margin-left: 2px;
-  background-color: var(--terminal-station-color);
+  background-color: var(--md-sys-color-secondary);
+  color: var(--md-sys-color-on-secondary);
 }
 
 .arrow-box {
@@ -134,7 +131,7 @@
 .arrow-icon .line {
   width: 100%;
   height: 3px;
-  background-color: var(--split-line-color);
+  background-color: var(--md-sys-color-outline-variant);
 }
 
 .arrow-icon .triangle {
@@ -142,25 +139,25 @@
   height: 0;
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
-  border-left: 10px solid var(--split-line-color);
+  border-left: 10px solid var(--md-sys-color-outline-variant);
 }
 
 .place {
   font-size: 18px;
   font-weight: bold;
-  color: var(--bottom-main-color);
+  color: var(--md-sys-color-on-surface);
   margin-bottom: 4px;
 }
 
 .time,
 .duration {
   font-size: 12px;
-  color: var(--top-sub-color);
+  color: var(--md-sys-color-on-surface-variant);
 }
 
 .date {
   font-size: 12px;
-  color: var(--arrow-time-color);
+  color: var(--cnrail-color-date);
 }
 
 .time {
@@ -170,11 +167,11 @@
 }
 
 .station-bottom {
-  border-top: 1px solid var(--split-line-color);
+  border-top: 1px solid var(--md-sys-color-outline-variant);
   margin: 10px 20px;
   padding-top: 10px;
   font-size: 12px;
-  color: var(--top-sub-color);
+  color: var(--md-sys-color-on-surface-variant);
   text-align: left;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -190,13 +187,13 @@
 }
 
 .card-bottom {
-  background-color: var(--bottom-bg-color);
+  background-color: color-mix(in srgb, var(--md-sys-color-surface) 67%, transparent);
 }
 
 .bottom-title {
   font-size: 18px;
   font-weight: bold;
-  color: var(--bottom-main-color);
+  color: var(--md-sys-color-on-surface);
   margin-bottom: 10px;
 }
 
@@ -206,23 +203,19 @@
   border-collapse: collapse;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: var(--box-shadow);
+  box-shadow: 3px 3px 8px color-mix(in srgb, var(--md-sys-color-shadow) 20%, transparent);
 }
 
-/* .station-table thead {
-    border-bottom: 1px solid var(--station-table-line-color);
-  } */
-
 .station-table thead tr {
-  background-color: var(--station-table-head-bg-color);
+  background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 67%, transparent);
 }
 
 .station-table tbody tr:nth-child(odd) {
-  background-color: var(--station-table-odd-bg-color);
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container-lowest) 80%, transparent);
 }
 
 .station-table tbody tr:nth-child(even) {
-  background-color: var(--station-table-even-bg-color);
+  background-color: color-mix(in srgb, var(--md-sys-color-surface-container-low) 67%, transparent);
 }
 
 .station-table th,
@@ -237,20 +230,20 @@
 
 .station-table th {
   font-weight: bold;
-  color: var(--station-table-head-color);
+  color: var(--md-sys-color-on-primary-container);
   text-align: left;
 }
 
 .station-table td {
-  color: var(--bottom-main-color);
+  color: var(--md-sys-color-on-surface);
 }
 
 .station-point {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  box-shadow: var(--box-shadow);
-  background-color: var(--station-table-line-color);
+  box-shadow: 3px 3px 8px color-mix(in srgb, var(--md-sys-color-shadow) 20%, transparent);
+  background-color: var(--md-sys-color-outline);
 
   /* for ::after */
   --line-height: 31px;
@@ -264,16 +257,16 @@
   position: absolute;
   margin-left: -1px;
   margin-top: calc(var(--line-height) * -1);
-  box-shadow: var(--box-shadow);
-  border-left: 2px dashed var(--station-table-line-color);
+  box-shadow: 3px 3px 8px color-mix(in srgb, var(--md-sys-color-shadow) 20%, transparent);
+  border-left: 2px dashed var(--md-sys-color-outline);
 }
 
 .station-point.arrived {
-  background-color: var(--station-table-arrived-line-color);
+  background-color: var(--md-sys-color-primary);
 }
 
 .station-point.arrived::after {
-  border-left: 2px solid var(--station-table-arrived-line-color);
+  border-left: 2px solid var(--md-sys-color-primary);
 }
 
 .station-table tbody tr:first-child td .station-point::after {

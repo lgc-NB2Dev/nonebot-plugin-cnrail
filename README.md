@@ -154,6 +154,14 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 
 ## 📝 更新日志
 
+### 0.3.2
+
+- bump htmlrender 到 v0.8
+
+### 0.3.1
+
+- 修复 MoeFactory API 调用错误
+
 ### 0.3.0
 
 - 图片换用 Material Design 风格的莫奈（Monet）取色方案

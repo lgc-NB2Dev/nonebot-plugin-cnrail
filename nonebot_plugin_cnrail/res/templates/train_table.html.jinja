@@ -5,6 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/res/assets/index.css">
+  {% if theme_css -%}
+  <style>
+    {{ theme_css | safe }}
+  </style>
+  {% endif -%}
 </head>
 
 <body>
@@ -85,6 +90,6 @@
   </div>
 </body>
 
-<script type="module" src="/res/assets/index.mjs"></script>
+<script src="/res/assets/index.js"></script>
 
 </html>

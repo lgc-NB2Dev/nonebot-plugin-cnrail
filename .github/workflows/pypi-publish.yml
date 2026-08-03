@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-n-publish:
-    name: Use PDM to Build and publish Python 🐍 distributions 📦 to PyPI
+    name: Use uv to Build and publish Python 🐍 distributions 📦 to PyPI
     runs-on: ubuntu-latest
 
     permissions:
@@ -20,16 +20,15 @@ jobs:
         with:
           submodules: true
 
-      - name: Setup PDM
-        uses: pdm-project/setup-pdm@v3
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
 
-      - uses: pnpm/action-setup@v4
+      - name: 'Set up Python'
+        uses: actions/setup-python@v5
         with:
-          version: 10
-
-      - name: Build JS
-        working-directory: template_js
-        run: pnpm install --frozen-lockfile && pnpm build
+          python-version-file: 'pyproject.toml'
 
       - name: Build and Publish distribution 📦 to PyPI
-        run: pdm publish
+        run: |
+          uv build
+          uv publish
