@@ -2,69 +2,91 @@ from datetime import datetime, timedelta
 
 from cookit import camel_case
 from cookit.pyd import model_with_alias_generator
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .utils import TZ_SHANGHAI
 
 
 @model_with_alias_generator(camel_case)
+class RailGoTimetableItem(BaseModel):
+    arrive: str
+    day: int
+    depart: str
+    run_time: int = 0
+    station: str
+    station_telecode: str
+    stop_time: int
+    train_code: str
+    distance: int | None = None
+    speed: float | None = None
+
+
+@model_with_alias_generator(camel_case)
+class RailGoTrainMainData(BaseModel):
+    bureau: str = ""
+    bureau_short_name: str = ""
+    car: str = ""
+    car_owner: str = ""
+    number_full: list[str] = Field(default_factory=list)
+    number_kind: str = ""
+    rundays: list[str] = Field(default_factory=list)
+    runner: str = ""
+    spend: int = 0
+    timetable: list[RailGoTimetableItem]
+
+
+@model_with_alias_generator(camel_case)
+class RailGoCoachPicData(BaseModel):
+    car_code: str = ""
+    car_type: str = ""
+    train_style: str = ""
+
+
+class RailGoV2Response(BaseModel):
+    data: object | None
+    msg: str = ""
+    success: bool
+
+
+@model_with_alias_generator(camel_case)
 class TrainSearchData(BaseModel):
-    train_index: int
     train_number: str
     begin_station_name: str
     departure_time: str
     end_station_name: str
     arrival_time: str
-    day_count: int
     duration_minutes: int
-    distance: int
     train_type: str
-    cr_type: int
-    out_of_date_flag: int
+    day_count: int = 1
+    distance: int = 0
+    cr_type: int = 0
+    out_of_date_flag: int = 0
 
     @property
     def pass_time(self) -> str:
-        start_datetime = datetime.strptime(self.departure_time, "%H:%M").replace(
-            tzinfo=TZ_SHANGHAI,
-        )
-        end_datetime = datetime.strptime(self.arrival_time, "%H:%M").replace(
-            tzinfo=TZ_SHANGHAI,
-        )
-        if end_datetime < start_datetime:
-            end_datetime += timedelta(days=1)
-        time_difference = end_datetime - start_datetime
-        return (
-            f"{(str(self.day_count - 1 + time_difference.days) + ' 天') if (self.day_count - 1 + time_difference.days) > 0 else ''}"
-            f" {time_difference.seconds // 3600} 时 {time_difference.seconds % 3600 // 60} 分"
-        )
-
-
-@model_with_alias_generator(camel_case)
-class TrainSearchResult(BaseModel):
-    cursor: int
-    count: int
-    has_more: bool
-    total_count: int
-    data: list[TrainSearchData]
+        days, remaining_minutes = divmod(self.duration_minutes, 60 * 24)
+        hours, minutes = divmod(remaining_minutes, 60)
+        day_text = f"{days} 天 " if days else ""
+        return f"{day_text}{hours} 时 {minutes} 分"
 
 
 @model_with_alias_generator(camel_case)
 class TrainDetailViaStation(BaseModel):
     station_name: str
-    station_telegram_code: str | None
     train_number: str
-    arrival_time: str | None
-    departure_time: str | None
     stop_minutes: int
-    distance: int
-    checkout_name: str | None
-    speed: int | None
     day_index: int
-    company_name: str
-    province: str
-    district: str
-    out_of_date_flag: int
-    is_turn: bool
+    station_telegram_code: str | None = None
+    arrival_time: str | None = None
+    departure_time: str | None = None
+    distance: int = 0
+    checkout_name: str | None = None
+    speed: float | None = None
+    company_name: str = ""
+    province: str = ""
+    district: str = ""
+    out_of_date_flag: int = 0
+    is_turn: bool = False
 
 
 @model_with_alias_generator(camel_case)
@@ -77,17 +99,8 @@ class TrainDetailRoutingItem(BaseModel):
 
 
 @model_with_alias_generator(camel_case)
-class TrainDetailRoutingMissingItem(BaseModel):
-    train_number: str
-    begin_station_name: str | None
-    departure_time: str | None
-    end_station_name: str | None
-    arrival_time: str | None
-
-
-@model_with_alias_generator(camel_case)
 class TrainDetailRouting(BaseModel):
-    routing_items: list[TrainDetailRoutingItem | TrainDetailRoutingMissingItem]
+    routing_items: list[TrainDetailRoutingItem] = Field(default_factory=list)
     train_model: str
 
 
@@ -96,28 +109,23 @@ class TrainDetailData(BaseModel):
     train_number: str
     train_type: str
     company_name: str
-    food_coach_name: str | None
     via_stations: list[TrainDetailViaStation]
-    cr_type: int
     routing: TrainDetailRouting
+    food_coach_name: str | None = None
+    cr_type: int = 0
 
-    def arrived(self, station_index: int, train_date: str) -> bool:  # 有待修改
-        # logger.debug(f"index: {station_index}, date: {train_date}")
+    def arrived(self, station_index: int, train_date: str) -> bool:
         station = self.via_stations[station_index]
-        arrive_time_str = (
-            station.arrival_time
-            if station.arrival_time is not None
-            else station.departure_time
-        )
-        arrive_datetime = (
-            datetime.fromisoformat(
-                f"{train_date}T{arrive_time_str}",
-            )
-            + timedelta(days=station.day_index)
-        ).replace(tzinfo=TZ_SHANGHAI)
-        # logger.debug(
-        #     f"arrive: {arrive_time_str}, arrive_datetime: {arrive_datetime}, now: {datetime.now(TZ_SHANGHAI)}, bool: {datetime.now(TZ_SHANGHAI) >= arrive_datetime}",
-        # )
+        arrive_time_str = station.arrival_time or station.departure_time
+        if not arrive_time_str:
+            return False
+        try:
+            arrive_datetime = (
+                datetime.fromisoformat(f"{train_date}T{arrive_time_str}")
+                + timedelta(days=station.day_index)
+            ).replace(tzinfo=TZ_SHANGHAI)
+        except ValueError:
+            return False
         return datetime.now(TZ_SHANGHAI) >= arrive_datetime
 
 

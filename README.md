@@ -142,7 +142,7 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 
 灵感来源
 
-### [MoeFactory 提供的查询 API](https://train.moefactory.com/)
+### [RailGo 数据服务](https://api.railgo.dev/)
 
 数据来源
 
@@ -153,6 +153,10 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 感谢大家的赞助！你们的赞助将是我继续创作的动力！
 
 ## 📝 更新日志
+
+### 0.4.1
+
+- 改用 [RailGo](https://www.railgo.dev/) 提供的数据
 
 ### 0.4.0
 
