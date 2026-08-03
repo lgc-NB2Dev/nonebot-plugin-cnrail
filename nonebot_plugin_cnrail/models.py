@@ -2,13 +2,14 @@ from datetime import datetime, timedelta
 
 from cookit import camel_case
 from cookit.pyd import model_with_alias_generator
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from .utils import TZ_SHANGHAI
 
 
 @model_with_alias_generator(camel_case)
 class RailGoTimetableItem(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
     arrive: str
     day: int
     depart: str
@@ -23,6 +24,7 @@ class RailGoTimetableItem(BaseModel):
 
 @model_with_alias_generator(camel_case)
 class RailGoTrainMainData(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
     bureau: str = ""
     bureau_short_name: str = ""
     car: str = ""
@@ -37,6 +39,7 @@ class RailGoTrainMainData(BaseModel):
 
 @model_with_alias_generator(camel_case)
 class RailGoCoachPicData(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
     car_code: str = ""
     car_type: str = ""
     train_style: str = ""
@@ -50,6 +53,7 @@ class RailGoV2Response(BaseModel):
 
 @model_with_alias_generator(camel_case)
 class TrainSearchData(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
     train_number: str
     begin_station_name: str
     departure_time: str
@@ -72,6 +76,7 @@ class TrainSearchData(BaseModel):
 
 @model_with_alias_generator(camel_case)
 class TrainDetailViaStation(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
     station_name: str
     train_number: str
     stop_minutes: int
@@ -91,6 +96,7 @@ class TrainDetailViaStation(BaseModel):
 
 @model_with_alias_generator(camel_case)
 class TrainDetailRoutingItem(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
     train_number: str
     begin_station_name: str
     departure_time: str
@@ -100,12 +106,14 @@ class TrainDetailRoutingItem(BaseModel):
 
 @model_with_alias_generator(camel_case)
 class TrainDetailRouting(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
     routing_items: list[TrainDetailRoutingItem] = Field(default_factory=list)
     train_model: str
 
 
 @model_with_alias_generator(camel_case)
 class TrainDetailData(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
     train_number: str
     train_type: str
     company_name: str
@@ -131,6 +139,7 @@ class TrainDetailData(BaseModel):
 
 @model_with_alias_generator(camel_case)
 class TrainSNData(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
     emu_serial_number: str
     date: str
     train_number: str
