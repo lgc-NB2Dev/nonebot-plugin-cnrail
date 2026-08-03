@@ -154,6 +154,11 @@ Telegram：[@lgc2333](https://t.me/lgc2333)
 
 ## 📝 更新日志
 
+### 0.4.0
+
+- drop htmlrender v0.8 适配，仅兼容 v0.7 与 v0.6
+- 动态取色移至 Python 侧，删除 js 构建步骤
+
 ### 0.3.2
 
 - bump htmlrender 到 v0.8
