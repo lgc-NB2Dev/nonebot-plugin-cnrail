@@ -67,6 +67,14 @@ nb plugin install nonebot-plugin-cnrail
 在 nonebot2 项目的插件目录下, 打开命令行, 根据你使用的包管理器, 输入相应的安装命令
 
 <details>
+<summary>uv</summary>
+
+```bash
+uv add nonebot-plugin-cnrail
+```
+
+</details>
+<details>
 <summary>pip</summary>
 
 ```bash
