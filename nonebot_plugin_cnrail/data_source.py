@@ -19,9 +19,17 @@ from .models import (
 RAILGO_V1_API_BASE = "https://data.railgo.zenglingkun.cn/api/"
 RAILGO_V2_API_BASE = "https://rg-api.zenglingkun.cn/api/v2/"
 REQUEST_TIMEOUT = 15
-USER_AGENT = "nonebot-plugin-cnrail"
 
 T = TypeVar("T")
+
+
+def get_user_agent() -> str:
+    from httpx import __version__ as httpx_version
+    from nonebot import __version__ as nonebot_version
+
+    from . import __version__ as plugin_version
+
+    return f"httpx/{httpx_version} nonebot-plugin-cnrail/{plugin_version} (nonebot/{nonebot_version})"
 
 
 @dataclass
@@ -42,7 +50,7 @@ def _make_client(base_url: str) -> httpx.AsyncClient:
     return httpx.AsyncClient(
         base_url=base_url,
         follow_redirects=True,
-        headers={"User-Agent": USER_AGENT},
+        headers={"User-Agent": get_user_agent()},
         timeout=REQUEST_TIMEOUT,
     )
 
