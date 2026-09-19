@@ -1,5 +1,4 @@
 import string
-from contextlib import suppress
 from datetime import date, datetime, timedelta
 
 from arclet.alconna import Alconna, Args, Arparma, CommandMeta
@@ -17,6 +16,10 @@ from .data_source import (
 from .render import render_train_info
 from .utils import TZ_SHANGHAI
 
+# Leap year used while parsing a month/day string, so that `02-29` is accepted;
+# the year is rewritten to a candidate year right after parsing anyway
+NEUTRAL_YEAR = 2000
+
 
 def parse_date(date_str: str) -> date:
     # use local timezone
@@ -24,29 +27,28 @@ def parse_date(date_str: str) -> date:
         date_str = date_str.replace(x, "")
     today_date = datetime.now(tz=TZ_SHANGHAI).date()
 
-    def parse(df: str) -> date | None:
-        with suppress(ValueError):
-            parsed = (
-                datetime.strptime(date_str, df)
-                .replace(year=today_date.year, tzinfo=TZ_SHANGHAI)
-                .date()
-            )
-            for parsed_date in [
-                parsed,
-                parsed.replace(year=today_date.year - 1),
-                parsed.replace(year=today_date.year + 1),
-            ]:
-                if (
-                    (today_date - timedelta(days=2))
-                    <= parsed_date
-                    <= (today_date + timedelta(days=14))
-                ):
-                    return parsed_date
-        return None
-
     date_formats = ("%m/%d", "%m-%d", "%m月%d日", "%m月%d号", "%m月%d")
-    if r := next((parse(x) for x in date_formats if parse(x)), None):
-        return r
+    for date_format in date_formats:
+        try:
+            # only the month and day survive (`.date()` below), so no timezone is attached
+            parsed = datetime.strptime(  # noqa: DTZ007
+                f"{NEUTRAL_YEAR}{date_str}",
+                f"%Y{date_format}",
+            )
+        except ValueError:
+            continue
+        for year in (today_date.year, today_date.year - 1, today_date.year + 1):
+            try:
+                parsed_date = parsed.replace(year=year).date()
+            except ValueError:  # e.g. `02-29` in a non-leap candidate year
+                continue
+            if (
+                (today_date - timedelta(days=2))
+                <= parsed_date
+                <= (today_date + timedelta(days=14))
+            ):
+                return parsed_date
+
     raise ValueError
 
 
@@ -63,6 +65,8 @@ search_train_info = on_alconna(
     aliases={"列车信息", "查询列车"},
     skip_for_unmatch=False,
     use_cmd_start=True,
+    # default is True now, let the matcher answer, so parse errors and `-h` keep the extra hint
+    auto_send_output=False,
 )
 
 

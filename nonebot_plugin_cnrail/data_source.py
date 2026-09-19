@@ -249,15 +249,8 @@ async def query_train_info(
             if data is None:
                 return None
 
-        sn_data = None
-        coach_pic = await _query_coach_pic(client, query_code)
-        if coach_pic is not None and coach_pic.car_code:
-            sn_data = [
-                TrainSNData(
-                    emu_serial_number=coach_pic.car_code,
-                    date=train_date,
-                    train_number=query_code,
-                ),
-            ]
-
-    return _to_train_info(data, sn_data, train_date)
+    return _to_train_info(
+        data,
+        await get_train_sn(query_code, train_date),
+        train_date,
+    )
