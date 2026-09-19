@@ -1,15 +1,30 @@
 from datetime import datetime, timedelta
 
 from cookit import camel_case
-from cookit.pyd import model_with_alias_generator
+from cookit.pyd import PYDANTIC_V2, model_with_model_config
 from pydantic import BaseModel, ConfigDict, Field
 
 from .utils import TZ_SHANGHAI
 
+if PYDANTIC_V2:
+    model_config = ConfigDict(
+        alias_generator=camel_case,
+        validate_by_alias=True,
+        validate_by_name=True,
+    )
+else:
+    model_config = ConfigDict(
+        alias_generator=camel_case,
+        populate_by_name=True,
+    )
 
-@model_with_alias_generator(camel_case)
-class RailGoTimetableItem(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+
+@model_with_model_config(model_config)
+class CNRailBaseModel(BaseModel):
+    pass
+
+
+class RailGoTimetableItem(CNRailBaseModel):
     arrive: str
     day: int
     depart: str
@@ -22,9 +37,7 @@ class RailGoTimetableItem(BaseModel):
     speed: float | None = None
 
 
-@model_with_alias_generator(camel_case)
-class RailGoTrainMainData(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+class RailGoTrainMainData(CNRailBaseModel):
     bureau: str = ""
     bureau_short_name: str = ""
     car: str = ""
@@ -37,23 +50,19 @@ class RailGoTrainMainData(BaseModel):
     timetable: list[RailGoTimetableItem]
 
 
-@model_with_alias_generator(camel_case)
-class RailGoCoachPicData(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+class RailGoCoachPicData(CNRailBaseModel):
     car_code: str = ""
     car_type: str = ""
     train_style: str = ""
 
 
-class RailGoV2Response(BaseModel):
+class RailGoV2Response(CNRailBaseModel):
     data: object | None
     msg: str = ""
     success: bool
 
 
-@model_with_alias_generator(camel_case)
-class TrainSearchData(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+class TrainSearchData(CNRailBaseModel):
     train_number: str
     begin_station_name: str
     departure_time: str
@@ -74,9 +83,7 @@ class TrainSearchData(BaseModel):
         return f"{day_text}{hours} 时 {minutes} 分"
 
 
-@model_with_alias_generator(camel_case)
-class TrainDetailViaStation(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+class TrainDetailViaStation(CNRailBaseModel):
     station_name: str
     train_number: str
     stop_minutes: int
@@ -94,9 +101,7 @@ class TrainDetailViaStation(BaseModel):
     is_turn: bool = False
 
 
-@model_with_alias_generator(camel_case)
-class TrainDetailRoutingItem(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+class TrainDetailRoutingItem(CNRailBaseModel):
     train_number: str
     begin_station_name: str
     departure_time: str
@@ -104,16 +109,12 @@ class TrainDetailRoutingItem(BaseModel):
     arrival_time: str
 
 
-@model_with_alias_generator(camel_case)
-class TrainDetailRouting(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+class TrainDetailRouting(CNRailBaseModel):
     routing_items: list[TrainDetailRoutingItem] = Field(default_factory=list)
     train_model: str
 
 
-@model_with_alias_generator(camel_case)
-class TrainDetailData(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+class TrainDetailData(CNRailBaseModel):
     train_number: str
     train_type: str
     company_name: str
@@ -137,9 +138,7 @@ class TrainDetailData(BaseModel):
         return datetime.now(TZ_SHANGHAI) >= arrive_datetime
 
 
-@model_with_alias_generator(camel_case)
-class TrainSNData(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+class TrainSNData(CNRailBaseModel):
     emu_serial_number: str
     date: str
     train_number: str
