@@ -9,13 +9,13 @@ from .utils import TZ_SHANGHAI
 if PYDANTIC_V2:
     model_config = ConfigDict(
         alias_generator=camel_case,
-        validate_by_alias=True,
-        validate_by_name=True,
+        populate_by_name=True,
+        # validate_by_alias=True, validate_by_name=True,  # they are 2.11+
     )
 else:
     model_config = ConfigDict(
         alias_generator=camel_case,
-        populate_by_name=True,
+        allow_population_by_field_name=True,
     )
 
 
